@@ -336,11 +336,12 @@
     flex: none;
     background: none;
     border: none;
-    color: var(--muted);
+    border-radius: 0;
+    color: var(--footer-active);
     cursor: pointer;
   }
   .site-info-btn svg{ width: 16px; height: 16px; }
-  .site-info-btn:hover{ color: var(--footer-active); }
+  .site-info-btn:hover{ opacity: 0.75; }
   .other-sites-title{
     color: var(--footer-active);
     font-weight: 700;
@@ -2607,7 +2608,7 @@ async function loadCookieBannerText(){
 // http(s) — opening this file directly (file://) blocks fetch() of local JSON
 // under the browser's same-origin policy, so the panel falls back to a plain
 // "visit our other sites" note with no list in that case.
-const INFO_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg>';
+const INFO_ICON_SVG = '<svg viewBox="0 0 24 24"><g transform="skewX(-10)"><ellipse cx="12" cy="12" rx="8" ry="9" fill="none" stroke="currentColor" stroke-width="2.3"></ellipse><rect x="10.7" y="9.6" width="2.6" height="6.6" rx="0.5" fill="currentColor"></rect><rect x="8.9" y="15.4" width="6.2" height="1.7" rx="0.4" fill="currentColor"></rect><ellipse cx="12.1" cy="7.3" rx="1.5" ry="1.3" fill="currentColor"></ellipse></g></svg>';
 let otherSitesData = null;
 let otherSitesLoadFailed = false;
 
