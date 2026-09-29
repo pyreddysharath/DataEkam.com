@@ -716,6 +716,10 @@
     transition: opacity 0.15s ease, transform 0.1s ease;
   }
   button:active{ transform: scale(0.98); }
+  /* Format, Convert and Compare are the big full-width action buttons —
+     shorter than the base button padding gives, without touching the
+     smaller icon/utility buttons elsewhere that already use their own sizing. */
+  #beautifyBtn, #convertBtn, .compare-run-btn{ padding-top: 7px; padding-bottom: 7px; }
   .btn-pressed{
     transform: scale(0.92) !important;
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.35) !important;
@@ -741,6 +745,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    row-gap: 8px;
     margin-bottom: 12px;
   }
   .section-label{
@@ -753,10 +759,19 @@
   }
   .section-label-wash{ color: #4BB6E2; }
   .section-label-convert{ color: #7FBBB6; }
-  .convert-btn-group{
+  /* Data A / Data B labels above the Compare panes — centered over their
+     own pane, unlike the left-aligned Format/Convert section labels which
+     share the same base .section-label class. */
+  .compare-data-label{ justify-content: center; }
+  /* Clean checkbox, Copy, Download and the close (x) button all share the
+     result header's row now, to the right of the "Format"/"Convert" title —
+     wraps onto a second line on narrow widths rather than overflowing. */
+  .result-actions{
     display: flex;
+    align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .format-badge{
     display: inline-flex;
@@ -778,7 +793,8 @@
     color: #06201c;
     border: none;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 3px 10px;
+    line-height: 1.6;
   }
   #copyBtn:hover{ opacity: 0.88; }
   #copyBtn.copied{ background: var(--accent); }
@@ -787,7 +803,8 @@
     color: #06201c;
     border: none;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 3px 10px;
+    line-height: 1.6;
   }
   #washDownloadBtn:hover{ opacity: 0.88; }
   pre{
@@ -949,9 +966,6 @@
     padding: 6px 8px;
     margin-bottom: 0;
   }
-  .clean-option-row.result-clean-row{
-    margin: 0 0 10px;
-  }
   #washMenu .clean-info-panel{ margin: 4px 8px 6px; }
   .clean-check{ font-size: 12.5px; }
   .clean-info-btn{
@@ -1038,6 +1052,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    row-gap: 8px;
     margin-top: 14px;
     margin-bottom: 10px;
   }
@@ -1046,7 +1062,8 @@
     color: #06201c;
     border: none;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 3px 10px;
+    line-height: 1.6;
   }
   #convertCopyBtn:hover{ opacity: 0.88; }
   #convertCopyBtn.copied{ background: var(--accent); }
@@ -1055,7 +1072,8 @@
     color: #06201c;
     border: none;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 3px 10px;
+    line-height: 1.6;
   }
   #downloadBtn:hover{ opacity: 0.88; }
   .xlsx-note{
@@ -1140,34 +1158,53 @@
     .page-footer{ flex-wrap: wrap; justify-content: center; }
   }
   /* ---------- Main tab bar (Format / Compare) ---------- */
+  /* Full-width, each tab tinted with its own section's color (blue for
+     Transform, green/Ekam for Compare) rather than the old plain-text
+     underline pair — tinted at rest so the section colors read even before
+     picking one, solid-filled once active. */
   .main-tabs{
     display: flex;
-    gap: 8px;
+    gap: 0;
     margin-bottom: 16px;
-    border-bottom: 1px solid var(--border);
   }
+  /* Inclined chevron style — full-width, single diagonal seam where the two
+     tabs meet. Both tabs are clipped to a forward-leaning wedge with
+     matching slopes (Transform's trailing edge, Compare's leading edge);
+     Compare overlaps onto Transform by the same amount the cut removes
+     (negative margin + higher z-index), so the two cuts interlock into one
+     continuous diagonal line rather than reading as two separate edges. */
   .main-tab{
-    background: none;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    border-bottom: 3px solid transparent;
-    color: var(--muted);
+    border-radius: 0;
     font-family: var(--sans);
     font-size: 14px;
     font-weight: 700;
-    padding: 10px 6px;
-    margin-bottom: -1px;
+    padding: 12px 22px;
     cursor: pointer;
-    border-radius: 0;
+    position: relative;
+    transition: background 0.2s ease, color 0.2s ease;
   }
-  .main-tab:hover{ color: var(--text); }
-  .main-tab.active{
+  #formatTabBtn{
+    clip-path: polygon(0 0, 96% 0, 88% 100%, 0 100%);
+    z-index: 1;
+    background: color-mix(in srgb, #4BB6E2 14%, transparent);
     color: #4BB6E2;
-    border-bottom-color: #4BB6E2;
   }
-  #compareTabBtn.active{
+  #formatTabBtn:hover{ background: color-mix(in srgb, #4BB6E2 24%, transparent); }
+  #formatTabBtn.active{ background: #4BB6E2; color: #06201c; }
+  #compareTabBtn{
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
+    margin-left: -8%;
+    z-index: 2;
+    background: color-mix(in srgb, var(--ekam) 14%, transparent);
     color: var(--ekam);
-    border-bottom-color: var(--ekam);
   }
+  #compareTabBtn:hover{ background: color-mix(in srgb, var(--ekam) 24%, transparent); }
+  #compareTabBtn.active{ background: var(--ekam); color: #06201c; }
 
   /* ---------- Compare tab ---------- */
   .compare-toolbar{
@@ -1323,10 +1360,10 @@
   }
   .compare-backdrop::-webkit-scrollbar{ display: none; }
   .compare-diff-line{ min-height: 1.5em; }
-  .compare-diff-line.diff-del{
-    background: rgba(248, 113, 113, 0.28);
-    border-radius: 2px;
-  }
+  /* Data A and Data B use the same highlight color for a changed line —
+     matching Data B's teal — rather than red for removals and teal for
+     insertions, so both sides read as one consistent "this line differs". */
+  .compare-diff-line.diff-del,
   .compare-diff-line.diff-ins{
     background: rgba(94, 234, 212, 0.26);
     border-radius: 2px;
@@ -1464,8 +1501,19 @@
     align-self: center;
     flex-shrink: 0;
   }
+  /* Stacked ("Top and bottom") layout: the two panes sit one above the other,
+     so the nav column would need real vertical room it doesn't have between
+     them — switch it to a single horizontal row sitting in the vertical
+     middle instead, which is both the natural reading of "between Data A and
+     Data B" here and short enough to never overlap the results table below. */
   .compare-inputs.stacked .compare-nav{
-    margin: 4px auto;
+    flex-direction: row;
+    margin: 10px auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .compare-inputs.stacked .compare-copy-row{
+    margin-top: 0;
   }
   .compare-nav-btn{
     background: var(--panel-2);
@@ -1500,6 +1548,26 @@
   #copyToLeftBtn:hover:not(:disabled){ border-color: #4BB6E2; }
   #copyToRightBtn{ color: #7FBBB6; border-color: rgba(127, 187, 182, 0.4); }
   #copyToRightBtn:hover:not(:disabled){ border-color: #7FBBB6; }
+  /* Swap button sitting between the Data A / Data B panes (both layouts) —
+     always available, independent of whether a comparison has been run. */
+  .compare-swap-wrap{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .compare-swap-btn{
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--ekam);
+    font-size: 17px;
+    font-weight: 700;
+    padding: 7px 10px;
+    line-height: 1;
+    border-radius: 8px;
+  }
+  .compare-swap-btn:hover{ border-color: var(--ekam); }
   /* ---------- Differences table ---------- */
   .diff-table-wrap{
     overflow-x: auto;
@@ -1526,15 +1594,31 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
     white-space: nowrap;
-  }
-  .diff-table th:first-child, .diff-table th:nth-child(2),
-  .diff-table td:first-child, .diff-table td:nth-child(2){
-    color: var(--muted);
     text-align: center;
-    white-space: nowrap;
-    width: 1%;
   }
-  .diff-table td:nth-child(3), .diff-table td:nth-child(4){
+  .diff-table th.diff-cell, .diff-table td.diff-cell{ width: 50%; }
+  /* Data A / Data B each hold their own line number now instead of a
+     separate Line A / Line B column — trailing the text in Data A, leading
+     it in Data B — so the two columns read as a mirror pair either side of
+     the table's center line. */
+  .diff-cell-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .diff-table td.diff-cell:first-child .diff-cell-row{ justify-content: space-between; }
+  .diff-table td.diff-cell:last-child .diff-cell-row{ justify-content: flex-start; }
+  .diff-line-no{
+    flex-shrink: 0;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 11px;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .diff-cell-text{
+    flex: 1;
+    min-width: 0;
     font-family: var(--mono);
     white-space: pre-wrap;
     word-break: break-word;
@@ -1545,6 +1629,7 @@
     color: var(--muted);
     font-family: var(--sans);
     font-style: italic;
+    text-align: center;
   }
   /* ---------- Desktop "fit to page" sizing ----------
      On desktop widths, shrink the input/output/compare box heights and
@@ -1569,7 +1654,7 @@
        computed flex size and either blocks the fill or reintroduces the
        old "gutter content stretches the whole row" bug. */
     body{ display: flex; flex-direction: column; }
-    .wrap{ flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .wrap{ max-width: 1400px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
     /* While a footer panel (Data Ekam Services / Feedback / Privacy / Our
        Other Sites) is open, drop .wrap out of flex mode entirely instead of
        trying to squeeze it in alongside the always-visible Transform/Compare
@@ -1587,6 +1672,12 @@
     body.footer-panel-open .wrap{ display: block; flex: none; }
     #formatSection, #compareSection{ flex: 1; display: flex; flex-direction: column; min-height: 0; }
     #formatSection > .card, #compareSection > .card{ flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    /* Within the Compare tab specifically, give the Data A/B input card more
+       of the available height than the differences table below it, rather
+       than splitting evenly — the inputs are what people spend most of
+       their time in, and an even split left them cramped. */
+    #compareSection > .card.no-box{ flex: 1.7; }
+    #compareSection > #diffTablePanel{ flex: 1; }
     #dropZone{ flex: 1; min-height: 0; display: flex; flex-direction: column; transition: flex-grow 0.22s ease, flex-basis 0.22s ease, max-height 0.22s ease; }
     .input-flex{ flex: 1; min-height: 0; }
     /* While the Format/Convert dropdown is open, shrink the input box down
@@ -1603,6 +1694,19 @@
     .compare-drop-zone{ flex: 1; min-height: 0; height: auto; }
     .diff-table-wrap{ flex: 1; min-height: 0; overflow-y: auto; }
     .page-footer{ margin-top: auto; flex-shrink: 0; }
+    /* Stacked ("Top and bottom") Compare layout: drop out of the fill-to-one-
+       screen flex chain entirely (same escape hatch as footer-panel-open)
+       so Data A and Data B each get a real, readable height instead of
+       splitting whatever sliver of the viewport was left — the page grows
+       and scrolls instead of squeezing text areas until they overflow onto
+       the results table below them. */
+    #compareSection.stacked-layout{ display: block; flex: none; }
+    #compareSection.stacked-layout > .card.no-box{ flex: none; display: block; }
+    #compareSection.stacked-layout .compare-inputs{ flex: none; }
+    #compareSection.stacked-layout .compare-pane{ flex: none; }
+    #compareSection.stacked-layout .compare-drop-zone{ flex: none; height: 220px; }
+    #compareSection.stacked-layout #diffTablePanel{ flex: none; margin-top: 20px; }
+    #compareSection.stacked-layout .diff-table-wrap{ flex: none; max-height: 320px; }
 
     body{ padding: 14px; padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(14px, env(safe-area-inset-bottom)); }
     #input, .compare-textarea{ min-height: 100px; height: 100%; box-sizing: border-box; }
@@ -1617,24 +1721,15 @@
        desktop "fit to page" sizing pass; widened back out on request since
        that read as the sections merging together with no visible gap. */
     .card.no-box{ margin-bottom: 20px; }
-    .header{ margin-bottom: 4px; }
+    .header{ margin-bottom: 32px; }
     .brand-logo{ height: 26px; }
     h1{ font-size: 20px; }
     .brand-tagline{ font-size: 10px; }
     .main-tabs{ margin-bottom: 6px; margin-top: 0; }
-    .main-tab{ padding: 4px 6px; }
     .actions{ margin-top: 6px; }
     .meta-row{ margin: 2px 0; }
     .compare-toolbar{ margin-bottom: 6px; }
     .result-header, .convert-result-header{ margin-bottom: 4px; }
-    /* Clean checkbox and Copy/Download share one line instead of two stacked
-       rows (each was its own full-width flex row) — a plain display switch
-       is enough since .clean-info-panel sits between them in the DOM but is
-       display:none until opened, so it doesn't break the inline flow; once
-       opened it's block-level again and drops below as a full-width panel,
-       as before. */
-    .clean-option-row.result-clean-row{ display: inline-flex; margin: 0 14px 6px 0; vertical-align: middle; }
-    .convert-btn-group{ display: inline-flex; margin-bottom: 6px; vertical-align: middle; }
     .page-footer{ margin-top: 12px; }
   }
 </style>
@@ -1737,14 +1832,16 @@
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
       <p class="section-label section-label-wash">Format <span class="format-badge" id="formatBadge">TXT</span></p>
-      <button id="washCloseBtn" class="icon-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="clean-option-row result-clean-row">
-      <label class="compare-check clean-check">
-        <input type="checkbox" id="cleanCheckbox" checked>
-        <span>Clean</span>
-      </label>
-      <button type="button" id="cleanInfoBtn" class="clean-info-btn" aria-label="What does Clean do?" aria-expanded="false"><span class="i-glyph">i</span></button>
+      <div class="result-actions" id="washResultActions">
+        <label class="compare-check clean-check">
+          <input type="checkbox" id="cleanCheckbox" checked>
+          <span>Clean</span>
+        </label>
+        <button type="button" id="cleanInfoBtn" class="clean-info-btn" aria-label="What does Clean do?" aria-expanded="false"><span class="i-glyph">i</span></button>
+        <button id="copyBtn">Copy</button>
+        <button id="washDownloadBtn">Download</button>
+        <button id="washCloseBtn" class="icon-close" aria-label="Close">&times;</button>
+      </div>
     </div>
     <div class="clean-info-panel" id="cleanInfoPanel" style="display:none;">
       <p>When on, Format also tidies the output after beautifying it — what that means depends on the file type:</p>
@@ -1756,10 +1853,6 @@
       </ul>
       <p>Turn it off to keep the output exactly as formatted, blank lines included.</p>
     </div>
-    <div class="convert-btn-group">
-      <button id="copyBtn">Copy</button>
-      <button id="washDownloadBtn">Download</button>
-    </div>
     <p class="micro-copy" id="beautifyMicroCopy"></p>
     <p class="error-count" id="formatErrorCount" style="display:none;"></p>
     <div id="resultBody"><pre id="output"></pre></div>
@@ -1768,14 +1861,16 @@
   <div class="card" id="convertResultWrap" style="display:none;">
     <div class="convert-result-header">
       <p class="section-label section-label-convert">Convert <span class="format-badge" id="convertBadge">CSV</span></p>
-      <button id="convertCloseBtn" class="icon-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="clean-option-row result-clean-row">
-      <label class="compare-check clean-check">
-        <input type="checkbox" id="convertCleanCheckbox" checked>
-        <span>Clean</span>
-      </label>
-      <button type="button" id="convertCleanInfoBtn" class="clean-info-btn" aria-label="What does Clean do?" aria-expanded="false"><span class="i-glyph">i</span></button>
+      <div class="result-actions" id="convertResultActions">
+        <label class="compare-check clean-check">
+          <input type="checkbox" id="convertCleanCheckbox" checked>
+          <span>Clean</span>
+        </label>
+        <button type="button" id="convertCleanInfoBtn" class="clean-info-btn" aria-label="What does Clean do?" aria-expanded="false"><span class="i-glyph">i</span></button>
+        <button id="convertCopyBtn">Copy</button>
+        <button id="downloadBtn">Download</button>
+        <button id="convertCloseBtn" class="icon-close" aria-label="Close">&times;</button>
+      </div>
     </div>
     <div class="clean-info-panel" id="convertCleanInfoPanel" style="display:none;">
       <p>When on, Convert also tidies the source data before converting it — what that means depends on the input's file type:</p>
@@ -1787,13 +1882,9 @@
       </ul>
       <p>Turn it off to convert the source exactly as entered.</p>
     </div>
-    <div class="convert-btn-group">
-      <button id="convertCopyBtn">Copy</button>
-      <button id="downloadBtn">Download</button>
-    </div>
     <p class="micro-copy" id="convertMicroCopy"></p>
     <p class="error-count" id="convertErrorCount" style="display:none;"></p>
-    <div class="convert-output-flex">
+    <div class="convert-output-flex" id="convertOutputFlex">
       <div class="output-gutter" id="convertOutputGutter"></div>
       <pre id="convertOutput"></pre>
     </div>
@@ -1815,7 +1906,7 @@
 
       <div id="compareInputs" class="compare-inputs">
         <div class="compare-pane">
-          <p class="section-label" style="color:var(--ekam);">Data A</p>
+          <p class="section-label compare-data-label" style="color:var(--ekam);">Data A</p>
           <div class="compare-drop-zone" id="compareLeftDropZone">
             <div class="compare-gutter" id="compareLeftGutter"></div>
             <div class="compare-text-wrap">
@@ -1833,7 +1924,12 @@
           <input type="file" id="compareLeftFileInput" accept=".txt,.csv,.tsv,.json,.xml,.md,.markdown,.log,.yaml,.yml,.toml,.html,.htm,.sql,.graphql,.gql,text/*" hidden>
         </div>
 
+        <div class="compare-swap-wrap" id="compareSwapWrap">
+          <button type="button" id="swapCompareBtn" class="compare-swap-btn" title="Swap Data A and Data B" aria-label="Swap Data A and Data B">&#8644;</button>
+        </div>
+
         <div class="compare-nav" id="compareNav" style="display:none;">
+          <div class="compare-swap-slot" id="compareSwapSlot"></div>
           <button type="button" id="prevChangeBtn" class="compare-nav-btn" title="Previous change">▲</button>
           <span id="changeCounter" class="change-counter">0 of 0 changes</span>
           <button type="button" id="nextChangeBtn" class="compare-nav-btn" title="Next change">▼</button>
@@ -1844,7 +1940,7 @@
         </div>
 
         <div class="compare-pane">
-          <p class="section-label" style="color:var(--ekam);">Data B</p>
+          <p class="section-label compare-data-label" style="color:var(--ekam);">Data B</p>
           <div class="compare-drop-zone" id="compareRightDropZone">
             <div class="compare-gutter" id="compareRightGutter"></div>
             <div class="compare-text-wrap">
@@ -1867,16 +1963,14 @@
       <p class="micro-copy" id="compareMicroCopy"></p>
     </div>
 
-    <div class="card" id="diffTablePanel" style="display:none;">
-      <p class="section-label">All differences <span class="format-badge" id="diffTableCount">0</span></p>
+    <div class="card no-box" id="diffTablePanel" style="display:none;">
+      <p class="section-label" style="color:var(--ekam);">Differences <span class="format-badge" id="diffTableCount">0</span></p>
       <div class="diff-table-wrap">
         <table class="diff-table" id="diffTable">
           <thead>
             <tr>
-              <th>Line A</th>
-              <th>Line B</th>
-              <th style="color:var(--ekam);">Data A</th>
-              <th style="color:var(--ekam);">Data B</th>
+              <th class="diff-cell" style="color:var(--ekam);">Data A</th>
+              <th class="diff-cell" style="color:var(--ekam);">Data B</th>
             </tr>
           </thead>
           <tbody id="diffTableBody"></tbody>
@@ -2834,6 +2928,31 @@ function locateJsonErrorLine(raw, message){
 }
 
 function getFormatErrors(raw, format){
+  const errorInfo = getFormatErrorsRaw(raw, format);
+  if (!errorInfo) return errorInfo;
+  // Clamp every reported line number into the input's actual line range.
+  // Some parsers report an error position *past* the last real line for an
+  // "unexpected end of input" condition — js-yaml's EOF errors (unterminated
+  // flow collection/quoted string, etc.) report mark.line equal to the
+  // total line count, which this file's 0-based-to-1-based "+1" conversion
+  // then pushes one past it. Without this clamp, renderHighlight() (which
+  // only ever renders one <div> per actual line) silently highlights
+  // nothing, while the "N error(s) found — line X highlighted above" text
+  // still names that out-of-range line — errors shown with no visible
+  // highlight. Clamping to the last real line keeps the highlight visible
+  // and still meaningful (the problem the parser is describing genuinely
+  // is "at the end of the file").
+  const totalLines = Math.max(1, raw.split(/\r?\n/).length);
+  const clampedLines = new Set();
+  errorInfo.lines.forEach(n => clampedLines.add(Math.min(Math.max(1, n), totalLines)));
+  // count follows clampedLines.size (not the original errorInfo.count) so it
+  // always matches how many line numbers are actually listed/highlighted —
+  // clamping can only ever merge lines together (never split), so this is
+  // <= the original count.
+  return { lines: clampedLines, count: clampedLines.size, message: errorInfo.message };
+}
+
+function getFormatErrorsRaw(raw, format){
   try {
     switch(format){
       case 'json': {
@@ -3707,14 +3826,24 @@ function runWash(format){
   if (errorInfo) succeeded = false;
 
   formatBadge.textContent = format.toUpperCase();
-  lastOutputText = result.plain;
   lastWashFormat = format;
 
-  if (result.isTable) {
-    resultBody.innerHTML = result.html;
+  if (succeeded) {
+    lastOutputText = result.plain;
+    if (result.isTable) {
+      resultBody.innerHTML = result.html;
+    } else {
+      resultBody.innerHTML = `<div class="output-flex"><div class="output-gutter" id="outputGutter"></div><pre id="output">${result.html}</pre></div>`;
+      wireOutputGutter(document.getElementById('output'), document.getElementById('outputGutter'), result.plain);
+    }
   } else {
-    resultBody.innerHTML = `<div class="output-flex"><div class="output-gutter" id="outputGutter"></div><pre id="output">${result.html}</pre></div>`;
-    wireOutputGutter(document.getElementById('output'), document.getElementById('outputGutter'), result.plain);
+    // No output when the source doesn't actually parse as the chosen
+    // format — a best-effort beautify of invalid input is noise, not a
+    // useful result, and showing it next to the error message invited
+    // confusion about which one to trust. Copy/Download already no-op on
+    // an empty lastOutputText, so clearing it here disables both too.
+    lastOutputText = '';
+    resultBody.innerHTML = '';
   }
 
   // Show the actual parser message (not just "couldn't parse this"), same
@@ -3734,7 +3863,14 @@ function runWash(format){
   }
   setErrorCount(formatErrorCount, errorInfo);
 
-  resultCard.style.display = 'block';
+  // Cleared (not set to 'block') so the desktop media query's own
+  // `#formatSection > .card{ display:flex; ... }` rule can take effect —
+  // an inline 'block' here would outrank it (inline style always beats a
+  // stylesheet rule) and silently break the flex chain that makes
+  // #resultBody/pre#output fill the card and scroll internally instead of
+  // growing the whole page. See resultCard's "none" toggles below/elsewhere
+  // for hiding; showing it only ever needs to undo that.
+  resultCard.style.display = '';
   copyBtn.textContent = 'Copy';
   copyBtn.classList.remove('copied');
 }
@@ -3844,6 +3980,7 @@ const convertCloseBtn = document.getElementById('convertCloseBtn');
 const convertBadge = document.getElementById('convertBadge');
 const convertOutput = document.getElementById('convertOutput');
 const convertOutputGutter = document.getElementById('convertOutputGutter');
+const convertOutputFlex = document.getElementById('convertOutputFlex');
 const convertCopyBtn = document.getElementById('convertCopyBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const xlsxNote = document.getElementById('xlsxNote');
@@ -4470,10 +4607,17 @@ function runConversion(target){
     convertMicroCopy.className = 'micro-copy error';
     convertMicroCopy.style.color = '';
     convertMicroCopy.innerHTML = `<strong>Couldn't convert this to ${FORMAT_LABELS[target]}.</strong>${errorDetail ? `<br>${escapeHtml(errorDetail)}` : ''}`;
-    convertOutput.textContent = `Could not convert this content to ${FORMAT_LABELS[target]}: ${e.message}`;
-    wireOutputGutter(convertOutput, convertOutputGutter, convertOutput.textContent);
+    // No output — the source doesn't convert at all, so there's nothing
+    // real to show, and repeating the error inside the output box (as
+    // "Could not convert this content...") was just noise on top of the
+    // message already shown above.
+    convertOutput.textContent = '';
+    convertOutputFlex.style.display = 'none';
     convertBadge.textContent = target.toUpperCase();
-    convertResultWrap.style.display = 'block';
+    // Cleared, not 'block' — see the matching comment on resultCard's
+    // display toggle: an inline 'block' would outrank the desktop media
+    // query's `display:flex` rule and break the internal-scroll flex chain.
+    convertResultWrap.style.display = '';
     xlsxNote.style.display = 'none';
     pdfNote.style.display = 'none';
     lastConvertText = '';
@@ -4494,7 +4638,8 @@ function runConversion(target){
   convertBadge.textContent = target.toUpperCase();
   convertOutput.textContent = result.text || '(no data to convert)';
   wireOutputGutter(convertOutput, convertOutputGutter, convertOutput.textContent);
-  convertResultWrap.style.display = 'block';
+  convertOutputFlex.style.display = '';
+  convertResultWrap.style.display = '';
   xlsxNote.style.display = target === 'xlsx' ? 'block' : 'none';
   pdfNote.style.display = target === 'pdf' ? 'block' : 'none';
   convertCopyBtn.textContent = 'Copy';
@@ -4664,6 +4809,9 @@ const copyToLeftBtn = document.getElementById('copyToLeftBtn');
 const copyToRightBtn = document.getElementById('copyToRightBtn');
 const changeCounter = document.getElementById('changeCounter');
 const compareNav = document.getElementById('compareNav');
+const swapCompareBtn = document.getElementById('swapCompareBtn');
+const compareSwapWrap = document.getElementById('compareSwapWrap');
+const compareSwapSlot = document.getElementById('compareSwapSlot');
 const compareInputsEl = document.getElementById('compareInputs');
 const diffTablePanel = document.getElementById('diffTablePanel');
 const diffTableBody = document.getElementById('diffTableBody');
@@ -4693,6 +4841,12 @@ const STACKED_ICON = '<rect x="4" y="3" width="16" height="8" rx="1.5"/><rect x=
 compareLayoutBtn.addEventListener('click', () => {
   compareStacked = !compareStacked;
   compareInputsEl.classList.toggle('stacked', compareStacked);
+  // Stacking Data A above Data B roughly doubles the vertical room the panes
+  // need, which the desktop "fit everything in one screen" flex sizing can't
+  // give them without squeezing text areas down to nothing — so stacked mode
+  // instead lets this section take its natural height and the page scroll,
+  // the same escape hatch used for the footer panels (see body.footer-panel-open).
+  compareSection.classList.toggle('stacked-layout', compareStacked);
   layoutLabel.textContent = compareStacked ? 'Side by side' : 'Top and bottom';
   layoutIcon.innerHTML = compareStacked ? SIDE_BY_SIDE_ICON : STACKED_ICON;
 });
@@ -4846,6 +5000,7 @@ compareLeftInput.addEventListener('input', () => {
   compareNav.style.display = 'none';
   diffTablePanel.style.display = 'none';
   currentCompareResult = null;
+  moveSwapBtnHome();
 });
 compareRightInput.addEventListener('input', () => {
   clearCompareHighlight(compareRightBackdrop);
@@ -4854,6 +5009,7 @@ compareRightInput.addEventListener('input', () => {
   compareNav.style.display = 'none';
   diffTablePanel.style.display = 'none';
   currentCompareResult = null;
+  moveSwapBtnHome();
 });
 
 // Initialize gutters in case either textarea already has content (e.g. browser
@@ -4870,6 +5026,7 @@ compareLeftClearBtn.addEventListener('click', () => {
   compareNav.style.display = 'none';
   diffTablePanel.style.display = 'none';
   currentCompareResult = null;
+  moveSwapBtnHome();
   compareLeftInput.focus();
 });
 compareRightClearBtn.addEventListener('click', () => {
@@ -4880,7 +5037,38 @@ compareRightClearBtn.addEventListener('click', () => {
   compareNav.style.display = 'none';
   diffTablePanel.style.display = 'none';
   currentCompareResult = null;
+  moveSwapBtnHome();
   compareRightInput.focus();
+});
+
+// ---------- Swap button (interchange Data A and Data B content) ----------
+// Lives between the two panes until a comparison has actually been run; once
+// Compare is clicked, performCompare() relocates it to the top of the nav
+// column (above the prev/next arrows), and from there swapping re-runs the
+// comparison immediately, the same way the left/right copy arrows do.
+function moveSwapBtnHome(){
+  if (swapCompareBtn.parentElement !== compareSwapWrap) compareSwapWrap.appendChild(swapCompareBtn);
+}
+function moveSwapBtnToNav(){
+  if (swapCompareBtn.parentElement !== compareSwapSlot) compareSwapSlot.appendChild(swapCompareBtn);
+}
+swapCompareBtn.addEventListener('click', () => {
+  const leftVal = compareLeftInput.value;
+  compareLeftInput.value = compareRightInput.value;
+  compareRightInput.value = leftVal;
+  clearCompareHighlight(compareLeftBackdrop);
+  clearCompareHighlight(compareRightBackdrop);
+  updateCompareGutter(compareLeftGutter, compareLeftInput);
+  updateCompareGutter(compareRightGutter, compareRightInput);
+  resetComparePlaceholders();
+  if (compareNav.style.display !== 'none') {
+    performCompare();
+  } else {
+    compareNav.style.display = 'none';
+    diffTablePanel.style.display = 'none';
+    currentCompareResult = null;
+    moveSwapBtnHome();
+  }
 });
 
 // ---------- Drag-and-drop file loading (Data A / Data B) ----------
@@ -5019,13 +5207,16 @@ function renderDiffTable(){
   currentChangeBlocks.forEach(block => {
     const lineA = block.leftStart !== -1 ? (block.leftStart + 1) : '—';
     const lineB = block.rightStart !== -1 ? (block.rightStart + 1) : '—';
+    // Line numbers live inside their own column now rather than a separate
+    // one — at the end of Data A (text reads first, line number trails it)
+    // and at the start of Data B (line number leads, text follows).
     const cellA = block.leftStart !== -1
-      ? `<td>${escapeHtml(originalLeft[block.leftStart]) || '&nbsp;'}</td>`
-      : `<td class="diff-table-missing">(missing)</td>`;
+      ? `<td class="diff-cell"><div class="diff-cell-row"><span class="diff-cell-text">${escapeHtml(originalLeft[block.leftStart]) || '&nbsp;'}</span><span class="diff-line-no">${lineA}</span></div></td>`
+      : `<td class="diff-cell diff-table-missing">(missing)</td>`;
     const cellB = block.rightStart !== -1
-      ? `<td>${escapeHtml(originalRight[block.rightStart]) || '&nbsp;'}</td>`
-      : `<td class="diff-table-missing">(missing)</td>`;
-    html += `<tr><td>${lineA}</td><td>${lineB}</td>${cellA}${cellB}</tr>`;
+      ? `<td class="diff-cell"><div class="diff-cell-row"><span class="diff-line-no">${lineB}</span><span class="diff-cell-text">${escapeHtml(originalRight[block.rightStart]) || '&nbsp;'}</span></div></td>`
+      : `<td class="diff-cell diff-table-missing">(missing)</td>`;
+    html += `<tr>${cellA}${cellB}</tr>`;
   });
   diffTableBody.innerHTML = html;
 }
@@ -5074,6 +5265,7 @@ function performCompare(){
     compareMicroCopy.className = 'micro-copy error';
     compareMicroCopy.innerHTML = `<strong>Paste text into both boxes to compare.</strong>`;
     compareNav.style.display = 'none';
+    moveSwapBtnHome();
     return;
   }
 
@@ -5093,6 +5285,7 @@ function performCompare(){
 
   compareMicroCopy.textContent = '';
   compareNav.style.display = 'flex';
+  moveSwapBtnToNav();
 
   if (currentChangeBlocks.length > 0) {
     goToChange(0);
