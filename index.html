@@ -1527,6 +1527,16 @@
     color: #06201c;
   }
   .compare-run-btn:hover:not(:disabled){ opacity: 0.88; }
+  /* Narrow screens: the "Top and bottom" / "Differences table" buttons drop
+     their text labels (icon-only, title attribute keeps them accessible)
+     so Compare can take the lion's share of the row and stay a single
+     readable line instead of the row wrapping to three stacked buttons. */
+  @media (max-width: 480px){
+    .compare-run-row .compare-toolbar-btn{ padding: 8px 10px; }
+    .compare-run-row .compare-toolbar-btn span{ display: none; }
+    .compare-run-row .compare-toolbar-btn svg{ width: 17px; height: 17px; }
+    .compare-run-btn{ flex: 1 1 auto; width: auto; min-width: 0; }
+  }
   /* ---------- Differences-table toggle ---------- */
   /* Same button styling as the "Top and bottom" layout toggle — on/off is
      shown by filling the button solid (like the active main tab) rather
@@ -1817,6 +1827,15 @@
        spilling over Data B (or whatever sits below) instead of shrinking
        to fit — which is the actual overlap bug this block exists to fix. */
     #compareSection.stacked-layout.diff-collapsed .compare-textarea{ min-height: 0; }
+    /* Differences table IS showing: mobile had no override for this case at
+       all, so Data A/Data B fell back to their normal ~220px-each height —
+       "expanding" instead of shrinking to make room for the table below,
+       the same compact sizing the desktop rules already give this state. */
+    #compareSection.stacked-layout:not(.diff-collapsed) .compare-drop-zone{ height: 100px; }
+    /* Same textarea floor problem as the diff-collapsed fix above — relax it
+       here too so the box can actually sit at the compact 100px instead of
+       the textarea's own 220px minimum forcing it back out. */
+    #compareSection.stacked-layout:not(.diff-collapsed) .compare-textarea{ min-height: 0; }
   }
 </style>
 </head>
