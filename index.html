@@ -326,7 +326,6 @@
     font-weight: 700;
   }
   .site-link:hover{ text-decoration: underline; }
-  .site-link svg{ width: 14px; height: 14px; flex: none; }
   .site-info-btn{
     display: flex;
     align-items: center;
@@ -335,14 +334,13 @@
     height: 20px;
     padding: 0;
     flex: none;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 50%;
+    background: none;
+    border: none;
     color: var(--muted);
     cursor: pointer;
   }
-  .site-info-btn svg{ width: 12px; height: 12px; }
-  .site-info-btn:hover{ color: var(--footer-active); border-color: var(--footer-active); }
+  .site-info-btn svg{ width: 16px; height: 16px; }
+  .site-info-btn:hover{ color: var(--footer-active); }
   .other-sites-title{
     color: var(--footer-active);
     font-weight: 700;
@@ -2609,7 +2607,6 @@ async function loadCookieBannerText(){
 // http(s) — opening this file directly (file://) blocks fetch() of local JSON
 // under the browser's same-origin policy, so the panel falls back to a plain
 // "visit our other sites" note with no list in that case.
-const LINK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 const INFO_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg>';
 let otherSitesData = null;
 let otherSitesLoadFailed = false;
@@ -2621,7 +2618,7 @@ function renderOtherSites(data){
   sites.forEach((site, i) => {
     const id = 'site' + i;
     html += `<div class="site-entry">
-      <a href="${escapeHtml(site.url)}" target="_blank" rel="noopener" class="site-link">${escapeHtml(site.name || site.url)}${LINK_ICON_SVG}</a>
+      <a href="${escapeHtml(site.url)}" target="_blank" rel="noopener" class="site-link">${escapeHtml(site.name || site.url)}</a>
       <button type="button" class="site-info-btn" data-info-toggle="${id}" aria-label="About ${escapeHtml(site.name || site.url)}" aria-expanded="false">${INFO_ICON_SVG}</button>
     </div>
     <div class="site-desc" data-desc="${id}" hidden>${escapeHtml(site.information || '')}</div>`;
@@ -2699,7 +2696,7 @@ function formatFeedbackTimestamp(date){
 // TODO: paste Data Ekam's own deployed Apps Script Web App URL here (from
 // config/feedback_apps_script.gs) — left blank until then, in which case
 // feedback is simply not sent anywhere (the button still works, it's a no-op).
-const FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxPwZpVM9hxNnVcH_nPoFLH4pUhcsJhqQlo3IB9OwLLHgFqYvS_NLCN9aCxztz0fkK2/exec';
+const FEEDBACK_ENDPOINT = '';
 
 feedbackSubmitBtn.addEventListener('click', async () => {
   const name = feedbackName.value.trim();
