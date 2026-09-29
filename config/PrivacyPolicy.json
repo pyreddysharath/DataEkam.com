@@ -1,0 +1,9 @@
+{
+  "intro": "Your data stays yours. Everything you paste, upload, beautify, or convert on Data Ekam runs entirely in your browser — nothing you type or upload is ever sent to, stored on, or logged by our servers.",
+  "bullets": [
+    "<strong>No file storage</strong> — files you drop or upload are read locally by your browser and never uploaded anywhere.",
+    "<strong>No content logging</strong> — pasted text, beautified output, and converted files are not recorded or transmitted.",
+    "<strong>Feedback is opt-in</strong> — the only information we ever receive is what you type into the feedback form, and only when you press submit.",
+    "<strong>Advertising cookies need your consent</strong> — if Google Ads is used on this site, ad personalization and tracking cookies are only set after you accept the cookie banner. Decline and the site works exactly the same, just without personalized ads."
+  ]
+}

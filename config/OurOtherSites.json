@@ -1,0 +1,20 @@
+{
+  "content": "We've also built these — take a look if they seem relevant to you.",
+  "sites": [
+    {
+      "name": "BharatGaruda.com",
+      "url": "https://bharatgaruda.com",
+      "information": "An aggregator of Indian government links, organized state-wise and pan-India, bringing official resources from across every state and union territory of India into one place."
+    },
+    {
+      "name": "AyuBase6.com",
+      "url": "https://ayubase6.com",
+      "information": "A personal health companion covering exercises, yoga routines, food and nutrition, reminders, and vital health checks — all in one place."
+    },
+	{
+      "name": "IntiGuttu.com",
+      "url": "https://intiguttu.com",
+      "information": "A searchable home reference for kitchen tips, remedies, DIY fixes and recipes."
+    }
+  ]
+}
