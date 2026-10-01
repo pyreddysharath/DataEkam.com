@@ -1157,9 +1157,14 @@
   @media (max-width: 480px){
     body{ padding: 14px; padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(14px, env(safe-area-inset-bottom)); }
     .card{ padding: 12px; border-radius: 10px; }
-    h1{ font-size: 24px; }
+    /* Match the same compact header sizing desktop's "fit to one screen"
+       pass uses (brand-logo/h1 overrides further down, scoped to
+       min-width:481px) — mobile has even less vertical room to spare, so
+       there's no reason for its logo to stay at the large base size with
+       extra gap below it. */
+    .brand-logo{ height: 26px; }
+    h1{ font-size: 20px; }
     .brand-tagline{ font-size: 10px; }
-    .title-row{ gap: 10px; }
     .actions button, .actions .convert-menu-wrap, .actions .wash-split-wrap{ min-width: 0; }
     .convert-menu{ font-size: 13px; }
     textarea{ min-height: 140px; }
@@ -1255,7 +1260,7 @@
   }
   .compare-inputs{
     display: flex;
-    gap: 12px;
+    gap: 6px;
     margin-bottom: 12px;
   }
   .compare-inputs.stacked{
@@ -1267,9 +1272,9 @@
      of wedged between the two panes — nothing but a small gap separates
      Data A from Data B. */
   .compare-inputs.stacked > .compare-pane:nth-child(1){ order: 1; }
-  .compare-inputs.stacked > .compare-pane:nth-child(4){ order: 2; }
-  .compare-inputs.stacked > #compareSwapWrap{ order: 3; }
-  .compare-inputs.stacked > #compareNav{ order: 3; }
+  .compare-inputs.stacked > #compareSwapWrap{ order: 2; }
+  .compare-inputs.stacked > #compareNav{ order: 2; }
+  .compare-inputs.stacked > .compare-pane:nth-child(4){ order: 3; }
   .compare-pane{
     flex: 1;
     min-width: 0;
@@ -1307,7 +1312,11 @@
     display: none;
     box-sizing: border-box;
     flex: 0 0 auto;
-    width: 34px;
+    /* Fits the actual number of digits (--gutter-digits, set in JS as line
+       count changes) instead of reserving a fixed width sized for the
+       largest case up front — 1ch per digit plus the gutter's own
+       left/right padding (0 + 6px). */
+    width: calc(var(--gutter-digits, 2) * 1ch + 6px);
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -1319,7 +1328,7 @@
     font-size: 14px;
     line-height: 1.5;
     padding: 10px 6px 10px 0;
-    text-align: right;
+    text-align: left;
     color: var(--muted);
     scrollbar-width: none;
   }
@@ -1567,17 +1576,24 @@
   .compare-inputs.stacked .compare-copy-row{
     margin-top: 0;
   }
+  /* In stacked ("Top and bottom") layout the swap/copy group reads better as
+     one horizontal row — interchange, then up, then down — rather than the
+     swap icon sitting on its own line above the up/down arrows. */
+  .compare-inputs.stacked .compare-swap-copy-group{
+    flex-direction: row;
+    gap: 6px;
+  }
   .compare-nav-btn{
-    background: var(--panel-2);
-    border: 1px solid var(--border);
+    background: none;
+    border: none;
     /* Same color as the interchange (swap) button, so all the nav arrows —
        prev/next change and the copy arrows — read as one family. */
     color: var(--ekam);
-    font-size: 13px;
-    padding: 6px 10px;
+    font-size: 15px;
+    padding: 4px 6px;
     line-height: 1;
   }
-  .compare-nav-btn:hover:not(:disabled){ border-color: var(--ekam); }
+  .compare-nav-btn:hover:not(:disabled){ opacity: 0.75; }
   .compare-nav-btn:disabled{ opacity: 0.35; cursor: not-allowed; }
   .change-counter{
     font-size: 11.5px;
@@ -1588,18 +1604,37 @@
     line-height: 1.3;
     writing-mode: horizontal-tb;
   }
+  /* Groups the interchange (swap) icon tightly with the copy arrows right
+     below it — all three move content between Data A and Data B, so they
+     read as one cluster rather than being spread out across the nav column. */
+  .compare-swap-copy-group{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
   .compare-copy-row{
     display: flex;
-    gap: 6px;
-    margin-top: 2px;
+    gap: 0;
+    margin-top: 0;
   }
   /* Copy arrows share the same neutral color as the prev/next (▲/▼) change
      arrows right next to them, rather than picking up Data A/B's blue/teal —
-     they're all just "arrows" in the same nav row. */
+     they're all just "arrows" in the same nav row. The SVG itself is wider
+     than it is tall (elongated shaft), giving it visible length without
+     making the icon overall bigger — flipped to tall-rather-than-wide once
+     stacked layout turns it into an up/down arrow. */
   .compare-copy-btn{
-    font-size: 15px;
-    font-weight: 700;
-    padding: 4px 9px;
+    padding: 2px;
+  }
+  .compare-copy-btn svg{
+    display: block;
+    width: 26px;
+    height: 16px;
+  }
+  .compare-inputs.stacked .compare-copy-btn svg{
+    width: 16px;
+    height: 26px;
   }
   /* Swap button sitting between the Data A / Data B panes (both layouts) —
      always available, independent of whether a comparison has been run. */
@@ -1614,16 +1649,16 @@
     margin: 0 auto;
   }
   .compare-swap-btn{
-    background: var(--panel-2);
-    border: 1px solid var(--border);
+    background: none;
+    border: none;
     color: var(--ekam);
-    font-size: 17px;
-    font-weight: 700;
-    padding: 7px 10px;
+    padding: 4px 6px;
     line-height: 1;
-    border-radius: 8px;
+    border-radius: 0;
+    font-size: 19px;
+    font-weight: 700;
   }
-  .compare-swap-btn:hover{ border-color: var(--ekam); }
+  .compare-swap-btn:hover{ opacity: 0.75; }
   /* ---------- Differences table ---------- */
   .diff-table-wrap{
     overflow-x: auto;
@@ -1835,6 +1870,16 @@
        here too so the box can actually sit at the compact 100px instead of
        the textarea's own 220px minimum forcing it back out. */
     #compareSection.stacked-layout:not(.diff-collapsed) .compare-textarea{ min-height: 0; }
+    /* The nav column between Data A and Data B is squeezed as tight as
+       possible on mobile: the flex gap down to near-zero, and the change
+       counter's own column narrowed so its text doesn't hold the column
+       wider than the icons actually sitting in it (which is what read as
+       a leftover gap even though the flex gap itself was already small).
+       Placed last so it wins over the earlier unconditional .compare-inputs/
+       .change-counter rules at matching specificity, regardless of source
+       order. */
+    .compare-inputs{ gap: 2px; }
+    .change-counter{ max-width: 46px; font-size: 10px; }
   }
 </style>
 </head>
@@ -2024,13 +2069,20 @@
         </div>
 
         <div class="compare-nav" id="compareNav" style="display:none;">
-          <div class="compare-swap-slot" id="compareSwapSlot"></div>
           <button type="button" id="prevChangeBtn" class="compare-nav-btn" title="Previous change">▲</button>
           <span id="changeCounter" class="change-counter">0 of 0 changes</span>
           <button type="button" id="nextChangeBtn" class="compare-nav-btn" title="Next change">▼</button>
-          <div class="compare-copy-row">
-            <button type="button" id="copyToLeftBtn" class="compare-nav-btn compare-copy-btn" title="Copy this change from Data B into Data A">&larr;</button>
-            <button type="button" id="copyToRightBtn" class="compare-nav-btn compare-copy-btn" title="Copy this change from Data A into Data B">&rarr;</button>
+          <!-- The interchange (swap) icon lives right above the copy arrows
+               once a compare has been run (see moveSwapBtnToNav) — all three
+               are "move content between Data A and Data B" actions, so they're
+               grouped tightly together, separate from the prev/next change
+               nav above them. -->
+          <div class="compare-swap-copy-group">
+            <div class="compare-swap-slot" id="compareSwapSlot"></div>
+            <div class="compare-copy-row">
+              <button type="button" id="copyToLeftBtn" class="compare-nav-btn compare-copy-btn" title="Copy this change from Data B into Data A">&larr;</button>
+              <button type="button" id="copyToRightBtn" class="compare-nav-btn compare-copy-btn" title="Copy this change from Data A into Data B">&rarr;</button>
+            </div>
           </div>
         </div>
 
@@ -4970,14 +5022,28 @@ let compareStacked = false;
 const SIDE_BY_SIDE_ICON = '<rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/>';
 const STACKED_ICON = '<rect x="4" y="3" width="16" height="8" rx="1.5"/><rect x="4" y="13" width="16" height="8" rx="1.5"/>';
 
+// Swap and copy icons are drawn as plain SVG rather than relying on Unicode
+// arrow glyphs (⇄ ⇅ ← → ↑ ↓) — those render with inconsistent weight, shaft
+// length and arrowhead style across fonts/platforms, and there was no way to
+// make a Unicode arrow's shaft longer without just making the whole
+// character bigger. These share one stroke style/width across all of them
+// (swap, copy-left/right, copy-up/down) so they read as one consistent
+// family, and each shaft runs edge-to-edge in its 24x24 box for a long,
+// clearly-visible line regardless of the button's own font-size.
+const ARROW_STROKE = 'fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+const RIGHT_ARROW_SVG = `<svg viewBox="0 0 24 24" ${ARROW_STROKE}><line x1="2" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>`;
+const LEFT_ARROW_SVG = `<svg viewBox="0 0 24 24" ${ARROW_STROKE}><line x1="22" y1="12" x2="4" y2="12"/><polyline points="11 5 4 12 11 19"/></svg>`;
+const UP_ARROW_SVG = `<svg viewBox="0 0 24 24" ${ARROW_STROKE}><line x1="12" y1="22" x2="12" y2="4"/><polyline points="5 11 12 4 19 11"/></svg>`;
+const DOWN_ARROW_SVG = `<svg viewBox="0 0 24 24" ${ARROW_STROKE}><line x1="12" y1="2" x2="12" y2="20"/><polyline points="5 13 12 20 19 13"/></svg>`;
 // Swap/copy icons point the way that actually matches the layout: left/right
 // arrows and a horizontal swap glyph when Data A and Data B sit side by side,
 // up/down arrows and a vertical swap glyph once "Top and bottom" stacks them.
 function updateCompareNavIcons(){
   swapCompareBtn.innerHTML = compareStacked ? '&#8645;' : '&#8644;';
-  copyToLeftBtn.innerHTML = compareStacked ? '&uarr;' : '&larr;';
-  copyToRightBtn.innerHTML = compareStacked ? '&darr;' : '&rarr;';
+  copyToLeftBtn.innerHTML = compareStacked ? UP_ARROW_SVG : LEFT_ARROW_SVG;
+  copyToRightBtn.innerHTML = compareStacked ? DOWN_ARROW_SVG : RIGHT_ARROW_SVG;
 }
+updateCompareNavIcons();
 compareLayoutBtn.addEventListener('click', () => {
   compareStacked = !compareStacked;
   compareInputsEl.classList.toggle('stacked', compareStacked);
@@ -4992,24 +5058,114 @@ compareLayoutBtn.addEventListener('click', () => {
   updateCompareNavIcons();
 });
 
-// ---------- Diff algorithm (LCS-based line diff, mapped back to original line indices) ----------
+// ---------- Diff algorithm (line diff, mapped back to original line indices) ----------
+// Two layers keep large pastes responsive without changing the result for
+// anything that already worked:
+//  1. Trim the common prefix/suffix first. Most real compares are mostly
+//     identical with changes clustered together, so the algorithm below only
+//     has to cover the differing middle region instead of the whole document.
+//  2. That middle region is diffed with Myers' shortest-edit-script algorithm
+//     (computeLineDiffOpsCore) instead of a brute-force O(n*m) LCS table — its
+//     cost tracks the number of actual differing lines (D) rather than the
+//     full line-count product, so a large document with only a handful of
+//     real changes stays fast even when those changes are scattered
+//     throughout it, not just clustered at the start/end (which is all
+//     prefix/suffix trimming alone can help with).
 function computeLineDiffOps(normLeft, normRight){
   const n = normLeft.length, m = normRight.length;
-  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
-  for (let i = n - 1; i >= 0; i--) {
-    for (let j = m - 1; j >= 0; j--) {
-      dp[i][j] = normLeft[i] === normRight[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+
+  let start = 0;
+  const maxStart = Math.min(n, m);
+  while (start < maxStart && normLeft[start] === normRight[start]) start++;
+
+  let endLeft = n, endRight = m;
+  while (endLeft > start && endRight > start && normLeft[endLeft - 1] === normRight[endRight - 1]) {
+    endLeft--; endRight--;
+  }
+
+  const ops = [];
+  for (let k = 0; k < start; k++) ops.push({ type: 'equal', li: k, rj: k });
+
+  const midLeft = normLeft.slice(start, endLeft);
+  const midRight = normRight.slice(start, endRight);
+  computeLineDiffOpsCore(midLeft, midRight).forEach(op => {
+    if (op.type === 'equal') ops.push({ type: 'equal', li: op.li + start, rj: op.rj + start });
+    else if (op.type === 'delete') ops.push({ type: 'delete', li: op.li + start });
+    else ops.push({ type: 'insert', rj: op.rj + start });
+  });
+
+  for (let k = endLeft; k < n; k++) ops.push({ type: 'equal', li: k, rj: (k - endLeft) + endRight });
+
+  return ops;
+}
+
+// Myers' O(N*D) shortest-edit-script algorithm (D = number of differing
+// lines). A time budget guards the genuine worst case — two large documents
+// that share almost nothing, where D approaches N+M — so an extreme paste
+// degrades to a plain "this whole region differs" result instead of ever
+// locking up the page.
+const DIFF_TIME_BUDGET_MS = 1200;
+
+function computeLineDiffOpsCore(a, b){
+  const N = a.length, M = b.length;
+  if (N === 0 && M === 0) return [];
+  if (N === 0) { const ops = []; for (let j = 0; j < M; j++) ops.push({ type: 'insert', rj: j }); return ops; }
+  if (M === 0) { const ops = []; for (let i = 0; i < N; i++) ops.push({ type: 'delete', li: i }); return ops; }
+
+  const max = N + M;
+  const offset = max;
+  const trace = [];
+  let v = new Int32Array(2 * max + 1);
+  v[offset + 1] = 0;
+
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const startTime = now();
+  let found = false;
+
+  outer:
+  for (let d = 0; d <= max; d++) {
+    if ((d & 63) === 0 && now() - startTime > DIFF_TIME_BUDGET_MS) break outer;
+    trace.push(v.slice());
+    for (let k = -d; k <= d; k += 2) {
+      let x;
+      if (k === -d || (k !== d && v[offset + k - 1] < v[offset + k + 1])) {
+        x = v[offset + k + 1];
+      } else {
+        x = v[offset + k - 1] + 1;
+      }
+      let y = x - k;
+      while (x < N && y < M && a[x] === b[y]) { x++; y++; }
+      v[offset + k] = x;
+      if (x >= N && y >= M) { found = true; break outer; }
     }
   }
-  const ops = [];
-  let i = 0, j = 0;
-  while (i < n && j < m) {
-    if (normLeft[i] === normRight[j]) { ops.push({ type: 'equal', li: i, rj: j }); i++; j++; }
-    else if (dp[i + 1][j] >= dp[i][j + 1]) { ops.push({ type: 'delete', li: i }); i++; }
-    else { ops.push({ type: 'insert', rj: j }); j++; }
+
+  if (!found) {
+    const ops = [];
+    for (let i = 0; i < N; i++) ops.push({ type: 'delete', li: i });
+    for (let j = 0; j < M; j++) ops.push({ type: 'insert', rj: j });
+    return ops;
   }
-  while (i < n) { ops.push({ type: 'delete', li: i }); i++; }
-  while (j < m) { ops.push({ type: 'insert', rj: j }); j++; }
+
+  let x = N, y = M;
+  const ops = [];
+  for (let d = trace.length - 1; d >= 0; d--) {
+    const vd = trace[d];
+    const k = x - y;
+    const prevK = (k === -d || (k !== d && vd[offset + k - 1] < vd[offset + k + 1])) ? k + 1 : k - 1;
+    const prevX = vd[offset + prevK];
+    const prevY = prevX - prevK;
+
+    while (x > prevX && y > prevY) {
+      ops.push({ type: 'equal', li: x - 1, rj: y - 1 });
+      x--; y--;
+    }
+    if (d > 0) {
+      if (x === prevX) { ops.push({ type: 'insert', rj: y - 1 }); y--; }
+      else { ops.push({ type: 'delete', li: x - 1 }); x--; }
+    }
+  }
+  ops.reverse();
   return ops;
 }
 
@@ -5110,6 +5266,7 @@ function updateCompareGutter(gutter, textarea){
     html += `<div class="compare-gutter-line">${i}</div>`;
   }
   gutter.innerHTML = html;
+  gutter.style.setProperty('--gutter-digits', String(String(lineCount).length));
   gutter.scrollTop = textarea.scrollTop;
 }
 
@@ -5142,6 +5299,7 @@ compareLeftInput.addEventListener('input', () => {
   setDiffTableVisible(false);
   currentCompareResult = null;
   moveSwapBtnHome();
+  updateSwapBtnVisibility();
 });
 compareRightInput.addEventListener('input', () => {
   clearCompareHighlight(compareRightBackdrop);
@@ -5151,12 +5309,14 @@ compareRightInput.addEventListener('input', () => {
   setDiffTableVisible(false);
   currentCompareResult = null;
   moveSwapBtnHome();
+  updateSwapBtnVisibility();
 });
 
 // Initialize gutters in case either textarea already has content (e.g. browser
 // autofill/restore-on-reload) so line numbers aren't gated behind the first keystroke.
 updateCompareGutter(compareLeftGutter, compareLeftInput);
 updateCompareGutter(compareRightGutter, compareRightInput);
+updateSwapBtnVisibility();
 
 // ---------- Clear buttons (× icon shown once a box has content) ----------
 compareLeftClearBtn.addEventListener('click', () => {
@@ -5168,6 +5328,7 @@ compareLeftClearBtn.addEventListener('click', () => {
   setDiffTableVisible(false);
   currentCompareResult = null;
   moveSwapBtnHome();
+  updateSwapBtnVisibility();
   compareLeftInput.focus();
 });
 compareRightClearBtn.addEventListener('click', () => {
@@ -5179,6 +5340,7 @@ compareRightClearBtn.addEventListener('click', () => {
   setDiffTableVisible(false);
   currentCompareResult = null;
   moveSwapBtnHome();
+  updateSwapBtnVisibility();
   compareRightInput.focus();
 });
 
@@ -5197,6 +5359,13 @@ function moveSwapBtnToNav(){
   if (swapCompareBtn.parentElement !== compareSwapSlot) compareSwapSlot.appendChild(swapCompareBtn);
   compareSwapWrap.style.display = 'none';
 }
+// There's nothing to swap when both Data A and Data B are empty, so hide the
+// interchange icon in that case (wherever it currently lives) rather than
+// leaving a button with no effect sitting on screen.
+function updateSwapBtnVisibility(){
+  const bothBlank = !compareLeftInput.value && !compareRightInput.value;
+  swapCompareBtn.style.display = bothBlank ? 'none' : '';
+}
 swapCompareBtn.addEventListener('click', () => {
   const leftVal = compareLeftInput.value;
   compareLeftInput.value = compareRightInput.value;
@@ -5214,6 +5383,7 @@ swapCompareBtn.addEventListener('click', () => {
     currentCompareResult = null;
     moveSwapBtnHome();
   }
+  updateSwapBtnVisibility();
 });
 
 // ---------- Drag-and-drop file loading (Data A / Data B) ----------
@@ -5379,16 +5549,44 @@ function scrollToLine(textarea, backdrop, lineIndex){
   backdrop.scrollTop = textarea.scrollTop;
 }
 
+// In stacked ("top and bottom") layout, Data A and Data B are separate page
+// sections rather than side-by-side columns — scrollToLine() only moves each
+// textarea's own internal scroll, which centers the changed line inside its
+// box but says nothing about whether that box itself is currently scrolled
+// into view on the page. Without this, navigating to a change could leave
+// one side's highlighted line centered in a box that's scrolled off-screen,
+// so only the other side's highlight was actually visible. This brings the
+// page scroll to wherever both newly-highlighted lines (on whichever sides
+// are part of this change) fit together, so both line up together on screen
+// whenever that's physically possible.
+function scrollChangePairIntoView(elements){
+  const visible = elements.filter(Boolean);
+  if (visible.length === 0) return;
+  const rects = visible.map(el => el.getBoundingClientRect());
+  const top = Math.min(...rects.map(r => r.top));
+  const bottom = Math.max(...rects.map(r => r.bottom));
+  const viewH = window.innerHeight;
+  const margin = 24;
+  if (top >= margin && bottom <= viewH - margin) return;
+  const blockHeight = bottom - top;
+  const scrollDelta = (blockHeight <= viewH - margin * 2)
+    ? top - ((viewH - blockHeight) / 2)
+    : top - margin;
+  window.scrollBy({ top: scrollDelta, behavior: 'smooth' });
+}
+
 function goToChange(index){
   if (currentChangeBlocks.length === 0) return;
   currentChangeIndex = (index + currentChangeBlocks.length) % currentChangeBlocks.length;
   clearCurrentHighlight();
   const block = currentChangeBlocks[currentChangeIndex];
+  let leftLineEl = null, rightLineEl = null;
 
   if (block.leftStart !== -1) {
     for (let r = block.leftStart; r <= block.leftEnd; r++) {
       const el = compareLeftBackdrop.querySelector(`[data-line-index="${r}"]`);
       if (el) el.classList.add('diff-current');
+      if (r === block.leftStart) leftLineEl = el;
     }
     scrollToLine(compareLeftInput, compareLeftBackdrop, block.leftStart);
   }
@@ -5396,10 +5594,12 @@ function goToChange(index){
     for (let r = block.rightStart; r <= block.rightEnd; r++) {
       const el = compareRightBackdrop.querySelector(`[data-line-index="${r}"]`);
       if (el) el.classList.add('diff-current');
+      if (r === block.rightStart) rightLineEl = el;
     }
     scrollToLine(compareRightInput, compareRightBackdrop, block.rightStart);
   }
   updateChangeCounter();
+  scrollChangePairIntoView([leftLineEl, rightLineEl]);
 }
 
 function performCompare(){
