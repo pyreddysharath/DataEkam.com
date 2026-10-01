@@ -2854,19 +2854,44 @@ function fitTitleToTagline(){
     h1.style.fontSize = newSize + 'px';
   }
 }
-fitTitleToTagline();
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(fitTitleToTagline);
+// The logo sits above the title, centered by its flex row against the
+// *whole* "Data Ekam" text block — but "Data" and "Ekam" aren't identical
+// widths, so that isn't the same as centering the logo over the space
+// between them. Nudge it sideways (via transform, so layout/centering
+// itself is untouched) until the logo's own center lines up with the
+// midpoint of that gap instead.
+function alignLogoToTitleGap(){
+  const logo = document.querySelector('.brand-logo');
+  const dataWord = document.querySelector('h1 .word-data');
+  const ekamWord = document.querySelector('h1 .word-ekam');
+  if (!logo || !dataWord || !ekamWord) return;
+  logo.style.transform = '';
+  const logoRect = logo.getBoundingClientRect();
+  const dataRect = dataWord.getBoundingClientRect();
+  const ekamRect = ekamWord.getBoundingClientRect();
+  if (!logoRect.width || !dataRect.width || !ekamRect.width) return;
+  const gapCenter = (dataRect.right + ekamRect.left) / 2;
+  const logoCenter = logoRect.left + logoRect.width / 2;
+  const delta = gapCenter - logoCenter;
+  logo.style.transform = `translateX(${delta}px)`;
 }
-window.addEventListener('load', fitTitleToTagline);
-window.addEventListener('resize', fitTitleToTagline);
+function fitTitleAndAlignLogo(){
+  fitTitleToTagline();
+  alignLogoToTitleGap();
+}
+fitTitleAndAlignLogo();
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(fitTitleAndAlignLogo);
+}
+window.addEventListener('load', fitTitleAndAlignLogo);
+window.addEventListener('resize', fitTitleAndAlignLogo);
 // Extra safety net: the Google Fonts stylesheet can finish swapping in
 // Montserrat slightly after fonts.ready/load already fired (slow network,
 // cache revalidation), which would silently leave the fit stale. A couple
 // of delayed re-fits catch that without needing a font-load event that
 // isn't reliably available across browsers.
-setTimeout(fitTitleToTagline, 300);
-setTimeout(fitTitleToTagline, 1000);
+setTimeout(fitTitleAndAlignLogo, 300);
+setTimeout(fitTitleAndAlignLogo, 1000);
 
 // ---------- Cookie consent (gates any future Google Ads / advertising cookies) ----------
 const cookieBanner = document.getElementById('cookieBanner');
