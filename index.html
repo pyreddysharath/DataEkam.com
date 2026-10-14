@@ -1334,7 +1334,9 @@
     scrollbar-width: none;
   }
   .compare-gutter::-webkit-scrollbar{ display: none; }
-  .compare-gutter-line{ min-height: 1.5em; }
+  .compare-gutter{ position: relative; }
+  .compare-gutter-spacer{ width: 1px; visibility: hidden; }
+  .compare-gutter-text{ position: absolute; left: 0; right: 0; white-space: pre; }
   .compare-drop-zone.has-gutter .compare-gutter{
     display: block;
   }
@@ -1390,6 +1392,11 @@
   }
   .compare-backdrop::-webkit-scrollbar{ display: none; }
   .compare-diff-line{ min-height: 1.5em; }
+  /* Empty filler row: sits opposite a line that exists only on the other side, so
+     every matching line stays on the same row in both boxes. */
+  .compare-diff-line.diff-pad{
+    background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(128,128,128,.16) 6px 8px);
+  }
   /* Data A and Data B use the same highlight color for a changed line —
      matching Data B's teal — rather than red for removals and teal for
      insertions, so both sides read as one consistent "this line differs". */
@@ -6700,14 +6707,68 @@ function buildCompareResult(leftText, rightText, ignoreSpaces, ignoreEmptyLines)
     }
   }
 
-  return { originalLeft, originalRight, leftTypes, rightTypes, blocks };
+  // Row alignment: lay the two sides out row by row so every line that is present
+  // on both sides lands on the same row. A line that exists on one side only gets an
+  // empty filler row opposite it; changed lines are paired one-to-one.
+  let rows = null, l2p = null, r2p = null;
+  if (originalLeft.some(l => l !== '') && originalRight.some(l => l !== '')) {
+    rows = [];
+    let nextL = 0, nextR = 0;
+    const flushGaps = (L, R) => {
+      const gl = [], gr = [];
+      for (; nextL < L; nextL++) gl.push(nextL);
+      for (; nextR < R; nextR++) gr.push(nextR);
+      const k = Math.max(gl.length, gr.length);
+      for (let q = 0; q < k; q++) rows.push({ l: q < gl.length ? gl[q] : -1, r: q < gr.length ? gr[q] : -1 });
+    };
+    let oi = 0;
+    while (oi < ops.length) {
+      if (ops[oi].type === 'equal') {
+        const L = leftIdxMap[ops[oi].li], R = rightIdxMap[ops[oi].rj];
+        flushGaps(L, R);
+        rows.push({ l: L, r: R });
+        nextL = L + 1; nextR = R + 1;
+        oi++;
+        continue;
+      }
+      const ds = [], is = [];
+      while (oi < ops.length && ops[oi].type !== 'equal') {
+        if (ops[oi].type === 'delete') ds.push(leftIdxMap[ops[oi].li]); else is.push(rightIdxMap[ops[oi].rj]);
+        oi++;
+      }
+      const k = Math.max(ds.length, is.length);
+      for (let q = 0; q < k; q++) {
+        const L = q < ds.length ? ds[q] : -1, R = q < is.length ? is[q] : -1;
+        flushGaps(L >= 0 ? L : nextL, R >= 0 ? R : nextR);
+        rows.push({ l: L, r: R });
+        if (L >= 0) nextL = L + 1;
+        if (R >= 0) nextR = R + 1;
+      }
+    }
+    flushGaps(originalLeft.length, originalRight.length);
+    l2p = new Array(originalLeft.length);
+    r2p = new Array(originalRight.length);
+    rows.forEach((row, pi) => { if (row.l >= 0) l2p[row.l] = pi; if (row.r >= 0) r2p[row.r] = pi; });
+  }
+  let paddedLeft = null, paddedRight = null, padLeftTypes = null, padRightTypes = null;
+  if (rows) {
+    paddedLeft = rows.map(row => row.l >= 0 ? originalLeft[row.l] : COMPARE_PAD);
+    paddedRight = rows.map(row => row.r >= 0 ? originalRight[row.r] : COMPARE_PAD);
+    padLeftTypes = rows.map(row => row.l >= 0 ? leftTypes[row.l] : (row.r >= 0 && rightTypes[row.r] !== 'equal' ? 'pad' : 'equal'));
+    padRightTypes = rows.map(row => row.r >= 0 ? rightTypes[row.r] : (row.l >= 0 && leftTypes[row.l] !== 'equal' ? 'pad' : 'equal'));
+  }
+  blocks.forEach(b => {
+    b.row = rows ? (b.leftStart !== -1 ? l2p[b.leftStart] : r2p[b.rightStart]) : -1;
+  });
+
+  return { originalLeft, originalRight, leftTypes, rightTypes, blocks, padded: !!rows, paddedLeft, paddedRight, padLeftTypes, padRightTypes };
 }
 
 function renderCompareBackdrop(backdrop, lines, types){
   let html = '';
   lines.forEach((line, idx) => {
     const cls = types[idx] !== 'equal' ? ' diff-' + types[idx] : '';
-    const content = line.length ? escapeHtml(line) : '\u00A0';
+    const content = (line.length && line !== COMPARE_PAD) ? escapeHtml(line) : '\u00A0';
     html += `<div class="compare-diff-line${cls}" data-line-index="${idx}">${content}</div>`;
   });
   backdrop.innerHTML = html;
@@ -6718,23 +6779,122 @@ function clearCompareHighlight(backdrop){
 }
 
 // ---------- Line numbers (gutter shows one number per line, as soon as text is present) ----------
+// Filler rows (see the row alignment in buildCompareResult) are lines containing only
+// this marker: they keep matching lines level across the two boxes, are never counted
+// as data and carry no number.
+const COMPARE_PAD = '​';
+
+function cleanCompareText(v){
+  if (v.indexOf(COMPARE_PAD) === -1) return v;
+  return v.split('\n').filter(l => l !== COMPARE_PAD).join('\n').split(COMPARE_PAD).join('');
+}
+
+// Only the numbers that are on screen (plus a buffer) are put in the DOM, so a
+// 100,000-line paste costs the same as a 100-line one.
+function renderGutterWindow(gutter){
+  const info = gutter._info;
+  if (!info) return;
+  const lh = info.lh;
+  const buffer = 40;
+  const first = Math.max(0, Math.floor(gutter.scrollTop / lh) - buffer);
+  const last = Math.min(info.rows, first + Math.ceil((gutter.clientHeight || 600) / lh) + buffer * 2);
+  if (gutter._winFirst === first && gutter._winLast === last && gutter._winVersion === info.version) return;
+  const nums = info.nums;
+  const out = new Array(last - first);
+  for (let i = first; i < last; i++) out[i - first] = nums ? nums[i] : (i + 1);
+  const node = gutter.querySelector('.compare-gutter-text');
+  node.textContent = out.join('\n');
+  node.style.top = (10 + first * lh) + 'px';
+  gutter._winFirst = first; gutter._winLast = last; gutter._winVersion = info.version;
+}
+function setGutterScroll(gutter, top){
+  gutter.scrollTop = top;
+  renderGutterWindow(gutter);
+}
+
 function updateCompareGutter(gutter, textarea){
   const dropZone = gutter.closest('.compare-drop-zone');
   const text = textarea.value;
   if (!text) {
     dropZone.classList.remove('has-gutter');
     gutter.innerHTML = '';
+    gutter._info = null;
     return;
   }
   dropZone.classList.add('has-gutter');
-  const lineCount = text.split(/\r?\n/).length;
-  let html = '';
-  for (let i = 1; i <= lineCount; i++) {
-    html += `<div class="compare-gutter-line">${i}</div>`;
+  let nums = null, rows, maxNum;
+  if (text.indexOf(COMPARE_PAD) === -1) {
+    rows = 1;
+    for (let at = text.indexOf('\n'); at !== -1; at = text.indexOf('\n', at + 1)) rows++;
+    maxNum = rows;
+  } else {
+    const lines = text.split('\n');
+    rows = lines.length;
+    nums = new Array(rows);
+    let n = 0;
+    for (let i = 0; i < rows; i++) nums[i] = lines[i] === COMPARE_PAD ? '' : ++n;
+    maxNum = n;
   }
-  gutter.innerHTML = html;
-  gutter.style.setProperty('--gutter-digits', String(String(lineCount).length));
-  gutter.scrollTop = textarea.scrollTop;
+  if (!gutter.querySelector('.compare-gutter-spacer')) {
+    gutter.innerHTML = '<div class="compare-gutter-spacer"></div><div class="compare-gutter-text"></div>';
+  }
+  const lh = parseFloat(getComputedStyle(gutter).lineHeight) || 21;
+  gutter.querySelector('.compare-gutter-spacer').style.height = (rows * lh) + 'px';
+  gutter.style.setProperty('--gutter-digits', String(String(maxNum).length));
+  gutter._info = { rows, nums, lh, version: (gutter._info ? gutter._info.version : 0) + 1 };
+  setGutterScroll(gutter, textarea.scrollTop);
+}
+
+// Editing a box ends the aligned view: remove the filler rows (keeping the caret
+// and scroll position where they were) so the text is exactly what the user typed.
+function dropCompareFillers(textarea){
+  const v = textarea.value;
+  if (v.indexOf(COMPARE_PAD) === -1) return;
+  const caret = textarea.selectionStart;
+  const before = v.slice(0, caret).split('\n');
+  let removed = 0;
+  for (let i = 0; i < before.length - 1; i++) if (before[i] === COMPARE_PAD) removed += 2;
+  const top = textarea.scrollTop;
+  textarea.value = cleanCompareText(v);
+  const pos = Math.max(0, caret - removed);
+  textarea.setSelectionRange(pos, pos);
+  textarea.scrollTop = top;
+}
+// Copying out of a box never carries the filler rows with it.
+[['compareLeftInput'], ['compareRightInput']].forEach(([id]) => {
+  document.getElementById(id).addEventListener('copy', e => {
+    const t = e.target;
+    const sel = t.value.slice(t.selectionStart, t.selectionEnd);
+    if (sel.indexOf(COMPARE_PAD) === -1 || !e.clipboardData) return;
+    e.clipboardData.setData('text/plain', cleanCompareText(sel));
+    e.preventDefault();
+  });
+});
+
+// Showing the gutter narrows the box, and a width change makes the browser lay the
+// whole text out again — expensive for a big paste. So the gutter is switched on, at
+// its final width, at the moment of the paste (while the box is still cheap to lay out).
+function primeCompareGutter(gutter, textarea, e){
+  const incoming = e.clipboardData ? e.clipboardData.getData('text') : '';
+  if (!incoming) return;
+  let rows = 1;
+  const existing = textarea.value;
+  for (let at = existing.indexOf('\n'); at !== -1; at = existing.indexOf('\n', at + 1)) rows++;
+  for (let at = incoming.indexOf('\n'); at !== -1; at = incoming.indexOf('\n', at + 1)) rows++;
+  gutter.closest('.compare-drop-zone').classList.add('has-gutter');
+  gutter.style.setProperty('--gutter-digits', String(String(rows).length));
+}
+compareLeftInput.addEventListener('paste', e => primeCompareGutter(compareLeftGutter, compareLeftInput, e));
+compareRightInput.addEventListener('paste', e => primeCompareGutter(compareRightGutter, compareRightInput, e));
+
+// Pasting a big file: let the browser paint the pasted text first, then draw the
+// line numbers on the next frame (and coalesce repeated input events into one).
+function scheduleCompareGutter(gutter, textarea){
+  if (gutter._gutterRaf) return;
+  gutter._gutterRaf = requestAnimationFrame(() => {
+    gutter._gutterRaf = 0;
+    updateCompareGutter(gutter, textarea);
+  });
 }
 
 // ---------- Placeholders ----------
@@ -6748,19 +6908,27 @@ function resetComparePlaceholders(){
 }
 
 // ---------- Scroll sync (backdrop + gutter mirror textarea scroll position) ----------
-compareLeftInput.addEventListener('scroll', () => {
-  compareLeftBackdrop.scrollTop = compareLeftInput.scrollTop;
-  compareLeftBackdrop.scrollLeft = compareLeftInput.scrollLeft;
-  compareLeftGutter.scrollTop = compareLeftInput.scrollTop;
-});
-compareRightInput.addEventListener('scroll', () => {
-  compareRightBackdrop.scrollTop = compareRightInput.scrollTop;
-  compareRightBackdrop.scrollLeft = compareRightInput.scrollLeft;
-  compareRightGutter.scrollTop = compareRightInput.scrollTop;
-});
+// After a comparison both boxes have matching lines on the same rows, so
+// scrolling either box simply scrolls the other by the same amount.
+function onComparePaneScroll(input, backdrop, gutter, otherInput, otherBackdrop, otherGutter){
+  backdrop.scrollTop = input.scrollTop;
+  backdrop.scrollLeft = input.scrollLeft;
+  setGutterScroll(gutter, input.scrollTop);
+  if (!currentCompareResult || !currentCompareResult.padded) return;
+  if (Math.abs(otherInput.scrollTop - input.scrollTop) < 1) return;
+  otherInput.scrollTop = input.scrollTop;
+  otherBackdrop.scrollTop = otherInput.scrollTop;
+  setGutterScroll(otherGutter, otherInput.scrollTop);
+}
+compareLeftInput.addEventListener('scroll', () => onComparePaneScroll(compareLeftInput, compareLeftBackdrop, compareLeftGutter, compareRightInput, compareRightBackdrop, compareRightGutter));
+compareRightInput.addEventListener('scroll', () => onComparePaneScroll(compareRightInput, compareRightBackdrop, compareRightGutter, compareLeftInput, compareLeftBackdrop, compareLeftGutter));
 compareLeftInput.addEventListener('input', () => {
+  dropCompareFillers(compareLeftInput);
+  dropCompareFillers(compareRightInput);
+  updateCompareGutter(compareRightGutter, compareRightInput);
+  clearCompareHighlight(compareRightBackdrop);
   clearCompareHighlight(compareLeftBackdrop);
-  updateCompareGutter(compareLeftGutter, compareLeftInput);
+  scheduleCompareGutter(compareLeftGutter, compareLeftInput);
   resetComparePlaceholders();
   compareNav.style.display = 'none';
   setDiffTableVisible(false);
@@ -6769,8 +6937,12 @@ compareLeftInput.addEventListener('input', () => {
   updateSwapBtnVisibility();
 });
 compareRightInput.addEventListener('input', () => {
+  dropCompareFillers(compareRightInput);
+  dropCompareFillers(compareLeftInput);
+  updateCompareGutter(compareLeftGutter, compareLeftInput);
+  clearCompareHighlight(compareLeftBackdrop);
   clearCompareHighlight(compareRightBackdrop);
-  updateCompareGutter(compareRightGutter, compareRightInput);
+  scheduleCompareGutter(compareRightGutter, compareRightInput);
   resetComparePlaceholders();
   compareNav.style.display = 'none';
   setDiffTableVisible(false);
@@ -6834,8 +7006,8 @@ function updateSwapBtnVisibility(){
   swapCompareBtn.style.display = bothBlank ? 'none' : '';
 }
 swapCompareBtn.addEventListener('click', () => {
-  const leftVal = compareLeftInput.value;
-  compareLeftInput.value = compareRightInput.value;
+  const leftVal = cleanCompareText(compareLeftInput.value);
+  compareLeftInput.value = cleanCompareText(compareRightInput.value);
   compareRightInput.value = leftVal;
   clearCompareHighlight(compareLeftBackdrop);
   clearCompareHighlight(compareRightBackdrop);
@@ -6947,8 +7119,8 @@ function updateChangeCounter(){
 function applyChangeCopy(direction){
   if (currentChangeIndex < 0 || !currentChangeBlocks[currentChangeIndex]) return;
   const block = currentChangeBlocks[currentChangeIndex];
-  const leftLines = compareLeftInput.value.split(/\r?\n/);
-  const rightLines = compareRightInput.value.split(/\r?\n/);
+  const leftLines = cleanCompareText(compareLeftInput.value).split(/\r?\n/);
+  const rightLines = cleanCompareText(compareRightInput.value).split(/\r?\n/);
 
   if (direction === 'toLeft') {
     if (block.leftStart !== -1 && block.rightStart !== -1) {
@@ -7047,31 +7219,31 @@ function goToChange(index){
   currentChangeIndex = (index + currentChangeBlocks.length) % currentChangeBlocks.length;
   clearCurrentHighlight();
   const block = currentChangeBlocks[currentChangeIndex];
+  const res = currentCompareResult;
+  // With rows aligned, a change sits on the same row in both boxes (a line that
+  // exists on one side only has an empty filler row opposite it).
+  const leftRow = res && res.padded ? block.row : block.leftStart;
+  const rightRow = res && res.padded ? block.row : block.rightStart;
   let leftLineEl = null, rightLineEl = null;
 
-  if (block.leftStart !== -1) {
-    for (let r = block.leftStart; r <= block.leftEnd; r++) {
-      const el = compareLeftBackdrop.querySelector(`[data-line-index="${r}"]`);
-      if (el) el.classList.add('diff-current');
-      if (r === block.leftStart) leftLineEl = el;
-    }
-    scrollToLine(compareLeftInput, compareLeftBackdrop, block.leftStart);
+  if (leftRow !== -1) {
+    leftLineEl = compareLeftBackdrop.querySelector(`[data-line-index="${leftRow}"]`);
+    if (leftLineEl) leftLineEl.classList.add('diff-current');
+    scrollToLine(compareLeftInput, compareLeftBackdrop, leftRow);
   }
-  if (block.rightStart !== -1) {
-    for (let r = block.rightStart; r <= block.rightEnd; r++) {
-      const el = compareRightBackdrop.querySelector(`[data-line-index="${r}"]`);
-      if (el) el.classList.add('diff-current');
-      if (r === block.rightStart) rightLineEl = el;
-    }
-    scrollToLine(compareRightInput, compareRightBackdrop, block.rightStart);
+  if (rightRow !== -1) {
+    rightLineEl = compareRightBackdrop.querySelector(`[data-line-index="${rightRow}"]`);
+    if (rightLineEl) rightLineEl.classList.add('diff-current');
+    scrollToLine(compareRightInput, compareRightBackdrop, rightRow);
   }
   updateChangeCounter();
   scrollChangePairIntoView([leftLineEl, rightLineEl]);
 }
 
 function performCompare(){
-  const leftText = compareLeftInput.value;
-  const rightText = compareRightInput.value;
+  // Any filler rows from a previous comparison are not data — work on the real text.
+  const leftText = cleanCompareText(compareLeftInput.value);
+  const rightText = cleanCompareText(compareRightInput.value);
 
   if (!leftText.trim() && !rightText.trim()) {
     compareMicroCopy.className = 'micro-copy error';
@@ -7092,8 +7264,24 @@ function performCompare(){
   currentChangeBlocks = result.blocks;
   currentCompareResult = result;
 
-  renderCompareBackdrop(compareLeftBackdrop, result.originalLeft, result.leftTypes);
-  renderCompareBackdrop(compareRightBackdrop, result.originalRight, result.rightTypes);
+  if (result.padded) {
+    // Show both sides row-aligned: filler rows go opposite lines the other side lacks.
+    const keepTop = compareLeftInput.scrollTop;
+    compareLeftInput.value = result.paddedLeft.join('\n');
+    compareRightInput.value = result.paddedRight.join('\n');
+    updateCompareGutter(compareLeftGutter, compareLeftInput);
+    updateCompareGutter(compareRightGutter, compareRightInput);
+    compareLeftInput.scrollTop = keepTop;
+    compareRightInput.scrollTop = keepTop;
+    renderCompareBackdrop(compareLeftBackdrop, result.paddedLeft, result.padLeftTypes);
+    renderCompareBackdrop(compareRightBackdrop, result.paddedRight, result.padRightTypes);
+  } else {
+    // One side is blank: nothing to align against. Drop any old filler rows.
+    if (compareLeftInput.value !== leftText) { compareLeftInput.value = leftText; updateCompareGutter(compareLeftGutter, compareLeftInput); }
+    if (compareRightInput.value !== rightText) { compareRightInput.value = rightText; updateCompareGutter(compareRightGutter, compareRightInput); }
+    renderCompareBackdrop(compareLeftBackdrop, result.originalLeft, result.leftTypes);
+    renderCompareBackdrop(compareRightBackdrop, result.originalRight, result.rightTypes);
+  }
 
   compareMicroCopy.textContent = '';
   compareNav.style.display = 'flex';
