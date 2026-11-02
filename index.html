@@ -1392,11 +1392,13 @@
   }
   .compare-backdrop::-webkit-scrollbar{ display: none; }
   .compare-diff-line{ min-height: 1.5em; }
-  /* Empty filler row: sits opposite a line that exists only on the other side, so
-     every matching line stays on the same row in both boxes. */
+  /* Empty filler row, marked red: the line is missing here but present on the other
+     side. It sits opposite that line so matching lines stay on the same row. */
   .compare-diff-line.diff-pad{
-    background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(128,128,128,.16) 6px 8px);
+    background: repeating-linear-gradient(135deg, rgba(239,68,68,.34) 0 6px, rgba(239,68,68,.20) 6px 8px);
+    border-radius: 2px;
   }
+  .compare-diff-line.diff-pad.diff-current{ outline-color: #ef4444; }
   /* Data A and Data B use the same highlight color for a changed line —
      matching Data B's teal — rather than red for removals and teal for
      insertions, so both sides read as one consistent "this line differs". */
@@ -1725,7 +1727,7 @@
   .diff-table tbody tr:last-child td{ border-bottom: none; }
   .diff-table tbody tr:nth-child(odd){ background: var(--panel-2); }
   .diff-table td.diff-table-missing{
-    color: var(--muted);
+    color: #ef4444;
     font-family: var(--sans);
     font-style: italic;
     text-align: center;
