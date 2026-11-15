@@ -1908,7 +1908,7 @@
   .footer-icons{ gap:10px; }
   .panel-about{ font-size:13px; line-height:1.6; color:var(--text); margin:0 0 8px; }
   .panel-about strong{ font-weight:600; }
-  .panel-guides{ margin:14px 0 0; font-family:var(--sans); }
+  .panel-guides{ margin:14px 0 0; font-family:var(--sans); scroll-margin-top:10px; }
   .panel-guides > summary{ list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--footer-active); user-select:none; -webkit-tap-highlight-color:transparent; padding:4px 0; }
   .panel-guides > summary::-webkit-details-marker{ display:none; }
   .panel-guides > summary svg{ width:13px; height:13px; transition:transform 0.2s ease; }
@@ -2859,6 +2859,14 @@ feedbackSubmitBtn.addEventListener('click', async () => {
     resetFeedbackPanel();
     updatePanelFillState();
   }, 2000);
+});
+
+// ---------- Guides (inside the About panel): bring it to the top when opened ----------
+const panelGuides = document.querySelector('.panel-guides');
+panelGuides.addEventListener('toggle', () => {
+  if (panelGuides.open) {
+    requestAnimationFrame(() => panelGuides.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+  }
 });
 
 // ---------- Deep link: /#feedback opens the feedback panel ----------
