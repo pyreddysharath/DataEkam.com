@@ -1902,32 +1902,14 @@
   }
 </style>
 <style>
-  /* ---------- On-page site content ---------- */
-  /* One collapsible block (closed by default) holding all the site content,
-     marked by a vertical accent bar on its left edge. */
-  #siteContent{ flex:none; width:100%; margin:34px 0 0; padding:0; font-family:var(--sans); font-size:15px; line-height:1.7; color:var(--text); }
-  #siteContent[open]{ margin-bottom:10px; scroll-margin-top:12px; }
-  #siteContent > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:14px; padding:8px 0; user-select:none; -webkit-tap-highlight-color:transparent; }
-  #siteContent > summary::-webkit-details-marker{ display:none; }
-  #siteContent .sc-sum-text{ flex:1; min-width:0; display:flex; flex-direction:column; }
-  #siteContent .sc-sum-title{ font-family:var(--sans); font-size:14px; font-weight:700; line-height:1.4; color:var(--footer-active); border-left:3px solid var(--footer-active); padding-left:11px; }
-  #siteContent .sc-chevron{ flex:none; width:20px; height:20px; border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--footer-active); transition:transform 0.2s ease, border-color 0.2s ease; }
-  #siteContent .sc-chevron svg{ width:11px; height:11px; }
-  #siteContent[open] .sc-chevron{ transform:rotate(180deg); }
-  #siteContent > summary:hover .sc-chevron{ border-color:var(--footer-active); }
-  #siteContent > summary:focus-visible{ outline:2px solid var(--footer-active); outline-offset:4px; border-radius:6px; }
-  #siteContent .sc-body{ max-width:874px; padding:12px 0 10px 14px; }
-  #siteContent h2{ font-family:var(--sans); font-size:15px; line-height:1.3; margin:0 0 8px; font-weight:700; color:var(--text); }
-  #siteContent h2:not(:first-child){ margin-top:24px; }
-  #siteContent h3{ font-family:var(--sans); font-size:14px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
-  #siteContent p{ margin:0 0 14px; }
-  #siteContent .sc-more{ margin:18px 0 0; font-size:13px; color:#8890a3; }
-  #siteContent strong{ font-weight:600; }
-  /* Inline links: accent colour with a fine, offset underline. */
-  #siteContent p a{ color:var(--footer-active); font-weight:600; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
-  #siteContent p a:hover{ text-decoration-thickness:2px; }
-  #siteContent .sc-steps{ list-style:none; margin:0 0 6px; padding:0; }
-  #siteContent .sc-steps li{ margin:0; padding:5px 0; }
+  /* ---------- Footer icon labels + About panel additions ---------- */
+  .footer-icon-btn{ flex-direction:column; align-items:center; gap:4px; text-decoration:none; }
+  .footer-icon-label{ font-family:var(--sans); font-size:10px; font-weight:600; line-height:1.2; letter-spacing:0.02em; white-space:nowrap; }
+  .footer-icons{ gap:10px; }
+  .panel-about{ font-size:13px; line-height:1.6; color:var(--text); margin:0 0 8px; }
+  .panel-about strong{ font-weight:600; }
+  .panel-links{ font-size:13px; margin:12px 0 0; }
+  .panel-links a{ color:var(--footer-active); font-weight:600; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
 </style>
 </head>
 <body>
@@ -2187,31 +2169,6 @@
     </div>
   </div>
 
-<details id="siteContent">
-  <summary>
-    <span class="sc-sum-text"><span class="sc-sum-title">About Data Ekam</span></span>
-    <span class="sc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
-  </summary>
-  <div class="sc-body">
-  <p>Data Ekam is a free tool that formats, converts and compares <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL and GraphQL</strong>, with export to Excel and PDF. Everything runs in your browser, so your data is never uploaded.</p>
-
-  <h2>How to use it</h2>
-  <ul class="sc-steps">
-    <li><strong>Format:</strong> paste your data, open Format and pick its format. Errors show the line and position.</li>
-    <li><strong>Convert:</strong> open Convert and pick the target format, then copy or download the result.</li>
-    <li><strong>Compare:</strong> put two versions in Data A and Data B to see every difference, line by line.</li>
-  </ul>
-
-  <h2>Questions</h2>
-  <ul class="sc-steps">
-    <li><strong>Is it free?</strong> Yes, with no account and no limits.</li>
-    <li><strong>How much data?</strong> Up to 1,000,000 characters.</li>
-    <li><strong>What does "Ekam" mean?</strong> Sanskrit for "one": one tool for many formats.</li>
-  </ul>
-  <p class="sc-more"><a href="guides/">Guides</a> &middot; <a href="about.html">About</a> &middot; <a href="contact.html">Contact</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></p>
-  </div>
-</details>
-
   <footer class="page-footer">
     <p class="copyright">&copy; <span id="copyrightYear"></span> DataEkam.com</p>
     <div class="footer-icons">
@@ -2221,17 +2178,20 @@
           <path d="M50 50 C62 30 80 30 80 50 C80 70 62 70 50 50 Z" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M53 50 L77 50" stroke-width="5" stroke-linecap="round"/>
         </svg>
+        <span class="footer-icon-label">About</span>
       </button>
       <button id="feedbackBtn" class="footer-icon-btn" title="Feedback" aria-label="Give feedback">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
         </svg>
+        <span class="footer-icon-label">Feedback</span>
       </button>
       <button id="privacyBtn" class="footer-icon-btn" title="Privacy Policy" aria-label="Privacy policy">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/>
           <path d="M9.5 12l1.8 1.8L15 10"/>
         </svg>
+        <span class="footer-icon-label">Privacy</span>
       </button>
       <button id="cookiesFooterBtn" class="footer-icon-btn" title="Manage Cookies" aria-label="Manage cookie preferences">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2240,6 +2200,7 @@
           <circle cx="12" cy="15.5" r="1" fill="currentColor" stroke="none"/>
           <circle cx="16" cy="11.5" r="1" fill="currentColor" stroke="none"/>
         </svg>
+        <span class="footer-icon-label">Cookies</span>
       </button>
       <a href="#" id="otherSitesBtn" class="footer-icon-btn" title="Our Other Sites" aria-label="Our other sites" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2247,6 +2208,7 @@
           <polyline points="15 3 21 3 21 9"/>
           <line x1="10" y1="14" x2="21" y2="3"/>
         </svg>
+        <span class="footer-icon-label">Our sites</span>
       </a>
     </div>
   </footer>
@@ -2263,6 +2225,7 @@
       <button id="infoCloseBtn" class="icon-close" aria-label="Close">&times;</button>
     </div>
     <p class="pronunciation-note" id="pronunciationNote">"Data Ekam" is pronounced <strong>DAY-tuh AY-kum</strong> — "Ekam" (एकम्) is Sanskrit for "one".</p>
+    <p class="panel-about">Data Ekam is a free tool that formats, converts and compares <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL and GraphQL</strong>, with export to Excel and PDF. Everything runs in your browser, so your data is never uploaded.</p>
     <div class="format-tabs">
       <button type="button" class="format-tab active" id="washTabBtn" data-tab="wash">Format</button>
       <button type="button" class="format-tab" id="convertTabBtn" data-tab="convert">Convert</button>
@@ -2403,6 +2366,7 @@ Alice,30</pre>
     </ul>
 
     <p id="servicesFootnote" style="margin:10px 0 0; font-size:12px; color:var(--muted);">Any format can be converted to any other using the Convert menu — every conversion produces both a copyable text preview and a downloadable file. SQL and GraphQL conversions are best-effort, since they aren't natural tabular formats.</p>
+    <p class="panel-links"><a href="guides/" target="_blank" rel="noopener">Guides ↗</a></p>
   </div>
 
   <div id="feedbackPanel" class="card info-panel" style="display:none;">
@@ -2552,8 +2516,7 @@ let footerIconBtns = [];
 // drops .wrap out of flex-fill mode so the page can grow to fit the panel
 // instead of squeezing the Transform/Compare section down to nothing.
 function updatePanelFillState(){
-  const anyOpen = [infoPanel, feedbackPanel, privacyPanel, otherSitesPanel].some(p => p.style.display !== 'none')
-    || document.getElementById('siteContent').open;
+  const anyOpen = [infoPanel, feedbackPanel, privacyPanel, otherSitesPanel].some(p => p.style.display !== 'none');
   document.body.classList.toggle('footer-panel-open', anyOpen);
 }
 
@@ -2895,21 +2858,6 @@ if (location.hash === '#feedback') {
     if (b) { b.click(); b.scrollIntoView({ block: 'center' }); }
   });
 }
-
-// ---------- "About Data Ekam" collapsible section ----------
-// Toggled explicitly (not left to the browser's built-in <details> handling)
-// so it behaves the same everywhere. Opening it releases the one-screen
-// desktop layout, exactly as the footer panels do, and brings the section
-// to the top of the screen so the expanded content is immediately visible.
-const siteContent = document.getElementById('siteContent');
-siteContent.querySelector('summary').addEventListener('click', (e) => {
-  e.preventDefault();
-  siteContent.open = !siteContent.open;
-  updatePanelFillState();
-  if (siteContent.open) {
-    requestAnimationFrame(() => siteContent.scrollIntoView({ block: 'start', behavior: 'smooth' }));
-  }
-});
 
 // ---------- Copyright year ----------
 document.getElementById('copyrightYear').textContent = new Date().getFullYear();
