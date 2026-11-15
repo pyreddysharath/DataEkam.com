@@ -1908,7 +1908,16 @@
   .footer-icons{ gap:10px; }
   .panel-about{ font-size:13px; line-height:1.6; color:var(--text); margin:0 0 8px; }
   .panel-about strong{ font-weight:600; }
-  .panel-links{ font-size:13px; margin:12px 0 0; }
+  .panel-links{ font-size:12px; margin:10px 0 0; }
+  .panel-guides{ margin:14px 0 0; font-family:var(--sans); }
+  .panel-guides > summary{ list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--footer-active); user-select:none; -webkit-tap-highlight-color:transparent; padding:4px 0; }
+  .panel-guides > summary::-webkit-details-marker{ display:none; }
+  .panel-guides > summary svg{ width:13px; height:13px; transition:transform 0.2s ease; }
+  .panel-guides[open] > summary svg{ transform:rotate(180deg); }
+  .panel-guides ul{ list-style:none; margin:8px 0 0; padding:0; }
+  .panel-guides li{ margin:0 0 12px; font-size:13px; line-height:1.55; color:var(--muted); }
+  .panel-guides li > strong{ display:block; font-weight:600; color:var(--text); }
+  .panel-guides li span strong{ font-weight:600; color:var(--text); }
   .panel-links a{ color:var(--footer-active); font-weight:600; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
 </style>
 </head>
@@ -2366,7 +2375,11 @@ Alice,30</pre>
     </ul>
 
     <p id="servicesFootnote" style="margin:10px 0 0; font-size:12px; color:var(--muted);">Any format can be converted to any other using the Convert menu — every conversion produces both a copyable text preview and a downloadable file. SQL and GraphQL conversions are best-effort, since they aren't natural tabular formats.</p>
-    <p class="panel-links"><a href="guides/" target="_blank" rel="noopener">Guides ↗</a></p>
+    <details class="panel-guides">
+      <summary><span>Guides</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <ul><li><strong>Choosing a config format</strong><span>Use <strong>JSON</strong> for data passed between programs, <strong>YAML</strong> for large configs edited by hand (comments allowed, indentation matters) and <strong>TOML</strong> for small, mostly flat config files.</span></li><li><strong>CSV or TSV</strong><span>CSV is what most software expects. TSV is safer when values contain commas. Cells copied from a spreadsheet are tab-separated, so treat them as TSV.</span></li><li><strong>JSON or XML</strong><span>JSON suits APIs and app data; XML suits documents and older enterprise formats. Converting XML to JSON keeps attributes as keys starting with @.</span></li><li><strong>Common JSON mistakes</strong><span>Trailing commas, single quotes, unquoted keys and comments. Format shows the line and position of the first problem.</span></li><li><strong>Common YAML mistakes</strong><span>Tabs used for indentation, uneven indentation, and unquoted values such as 3.10 being read as numbers. Quote anything ambiguous.</span></li><li><strong>CSV to JSON and back</strong><span>Every CSV value becomes text, so leading zeros are kept. Going back, nested objects become columns such as address.city.</span></li><li><strong>Cleaner comparisons</strong><span>Format both versions the same way before comparing, and switch on Ignore spaces unless whitespace matters, as it does in YAML.</span></li><li><strong>Readable SQL</strong><span>One clause per line, one column per line and upper-case keywords. Format, then SQL, lays a query out this way.</span></li></ul>
+      <p class="panel-links"><a href="guides/" target="_blank" rel="noopener">More detail ↗</a></p>
+    </details>
   </div>
 
   <div id="feedbackPanel" class="card info-panel" style="display:none;">
