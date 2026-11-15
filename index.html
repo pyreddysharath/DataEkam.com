@@ -1908,21 +1908,22 @@
   .footer-links a:hover{ color:var(--footer-active); text-decoration:underline; }
   /* One collapsible block (closed by default) holding all the site content,
      marked by a vertical accent bar on its left edge. */
-  #siteContent{ max-width:860px; width:100%; margin:40px auto 32px; padding:2px 0 2px 18px; border-left:3px solid var(--footer-active); font-size:15px; line-height:1.7; color:var(--text); }
-  #siteContent > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:14px; padding:8px 0; user-select:none; }
+  #siteContent{ flex:none; width:100%; margin:14px 0 0; padding:0 0 0 14px; border-left:3px solid var(--footer-active); font-family:var(--sans); font-size:15px; line-height:1.7; color:var(--text); }
+  #siteContent[open]{ margin-bottom:10px; scroll-margin-top:12px; }
+  #siteContent > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:14px; padding:4px 0; user-select:none; -webkit-tap-highlight-color:transparent; }
   #siteContent > summary::-webkit-details-marker{ display:none; }
   #siteContent .sc-sum-text{ flex:1; min-width:0; display:flex; flex-direction:column; }
-  #siteContent .sc-sum-title{ font-size:18px; font-weight:700; line-height:1.3; }
-  #siteContent .sc-sum-hint{ font-size:13px; color:#8890a3; }
-  #siteContent .sc-chevron{ flex:none; width:34px; height:34px; border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--footer-active); transition:transform 0.2s ease, border-color 0.2s ease; }
+  #siteContent .sc-sum-title{ font-family:var(--sans); font-size:14px; font-weight:700; line-height:1.4; color:var(--footer-active); }
+  #siteContent .sc-sum-hint{ font-size:12px; line-height:1.4; color:#8890a3; }
+  #siteContent .sc-chevron{ flex:none; width:30px; height:30px; border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--footer-active); transition:transform 0.2s ease, border-color 0.2s ease; }
   #siteContent .sc-chevron svg{ width:16px; height:16px; }
   #siteContent[open] .sc-chevron{ transform:rotate(180deg); }
   #siteContent > summary:hover .sc-chevron{ border-color:var(--footer-active); }
   #siteContent > summary:focus-visible{ outline:2px solid var(--footer-active); outline-offset:4px; border-radius:6px; }
-  #siteContent .sc-body{ padding:18px 0 10px; }
-  #siteContent h2{ font-size:20px; line-height:1.3; margin:0 0 12px; font-weight:700; color:var(--text); }
+  #siteContent .sc-body{ max-width:860px; padding:18px 0 10px; }
+  #siteContent h2{ font-family:var(--sans); font-size:18px; line-height:1.3; margin:0 0 12px; font-weight:700; color:var(--text); }
   #siteContent h2:not(:first-child){ margin-top:36px; }
-  #siteContent h3{ font-size:15px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
+  #siteContent h3{ font-family:var(--sans); font-size:14px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
   #siteContent p{ margin:0 0 14px; }
   #siteContent strong{ font-weight:600; }
   /* Inline links: accent colour with a fine, offset underline. */
@@ -1939,16 +1940,6 @@
   #siteContent .sc-links{ margin:14px 0 0; display:flex; flex-wrap:wrap; gap:8px; }
   #siteContent .sc-links a{ padding:6px 14px; border:1px solid var(--border); border-radius:999px; color:var(--text); font-size:13px; font-weight:600; text-decoration:none; transition:border-color 0.15s ease, color 0.15s ease; }
   #siteContent .sc-links a:hover{ border-color:var(--footer-active); color:var(--footer-active); }
-  @media (min-width: 481px){
-    /* The tool keeps exactly one viewport of height (as before, when .wrap
-       was the only child of a 100%-tall body); the site content below it is
-       reached by scrolling. In the states where the tool already grows past
-       one screen (a footer panel open, stacked Compare layout) the height is
-       released so the tool pushes the content down instead of overlapping it. */
-    .wrap{ flex:0 0 auto; height:calc(100vh - 28px); height:calc(100dvh - 28px); }
-    body.footer-panel-open .wrap,
-    body:has(#compareSection.stacked-layout) .wrap{ height:auto; min-height:calc(100vh - 28px); min-height:calc(100dvh - 28px); }
-  }
 </style>
 </head>
 <body>
@@ -2208,6 +2199,49 @@
     </div>
   </div>
 
+<details id="siteContent">
+  <summary>
+    <span class="sc-sum-text"><span class="sc-sum-title">About Data Ekam</span><span class="sc-sum-hint">What it does, how to use it, FAQ and guides</span></span>
+    <span class="sc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+  </summary>
+  <div class="sc-body">
+  <h2>Format, convert and compare data in one place</h2>
+  <p>Data Ekam is a free tool for cleaning up and moving structured text between formats. Paste your data or drop a file, pick what you want done, and copy or download the result. It handles <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL, GraphQL and plain text</strong>, and can also export to real <strong>Excel (.xlsx)</strong> and <strong>PDF</strong> files. There is nothing to install and no account to create.</p>
+  <p>Everything runs in your browser. The text you paste and the files you drop are processed on your own device and are never uploaded, which makes the tool safe to use with configuration files, customer exports and other data you cannot share.</p>
+
+  <h2>How to use it</h2>
+  <h3>Format</h3>
+  <p>On the Transform tab, paste your data, open <strong>Format</strong> and choose the format the input is in. Minified JSON is indented, XML is laid out by element, SQL is split into clauses, and CSV is tidied. If the input is not valid, the message tells you the line and position of the problem. Tick <strong>Clean</strong> to also remove stray blank lines and trailing spaces.</p>
+  <h3>Convert</h3>
+  <p>Open <strong>Convert</strong> and choose the target format. Any supported format can be converted to any other: CSV to JSON, JSON to YAML, XML to CSV, a table to Excel or PDF. Every conversion gives you a text preview to copy and a file to download.</p>
+  <h3>Compare</h3>
+  <p>On the Compare tab, put the original in <strong>Data A</strong> and the changed version in <strong>Data B</strong>, then press Compare. Differences are highlighted line by line, you can step through them one at a time, and a table lists every change. Options let you ignore spacing and empty lines.</p>
+
+  <h2>Frequently asked questions</h2>
+  <h3>Is my data uploaded anywhere?</h3>
+  <p>No. Formatting, conversion and comparison are done by your browser. Nothing you paste or drop is sent to a server. See the <a href="privacy.html">privacy policy</a> for details.</p>
+  <h3>Is Data Ekam free?</h3>
+  <p>Yes. There are no accounts, paid plans or usage limits.</p>
+  <h3>How much data can it handle?</h3>
+  <p>The input box accepts up to 1,000,000 characters. Larger files depend on the memory available to your browser.</p>
+  <h3>Why do I have to choose the format?</h3>
+  <p>Automatic detection fails on broken input, which is exactly what people bring to a formatter. Choosing the format lets the tool tell you precisely where your text stops being valid.</p>
+  <h3>Which files can I drop in?</h3>
+  <p>Text-based files such as .json, .yaml, .xml, .toml, .csv, .tsv, .md, .html, .sql, .graphql, .txt and .log, as well as Excel workbooks.</p>
+  <h3>What does "Ekam" mean?</h3>
+  <p>Ekam (एकम्) is Sanskrit for "one": one tool for many formats. It is pronounced DAY-tuh AY-kum. Read more <a href="about.html">about Data Ekam</a>.</p>
+
+  <h2>Guides</h2>
+  <p>Short, practical explanations of the formats this tool works with.</p>
+  <ul class="sc-guides"><li><a href="guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li><li><a href="guides/convert-csv-to-json.html">How to convert CSV to JSON</a></li><li><a href="guides/convert-json-to-csv.html">How to convert JSON to CSV</a></li><li><a href="guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="guides/yaml-indentation-errors.html">YAML indentation errors and other common mistakes</a></li><li><a href="guides/csv-vs-tsv.html">CSV vs TSV: what is the difference and which should you use?</a></li><li><a href="guides/xml-vs-json.html">XML vs JSON: key differences and how to convert between them</a></li><li><a href="guides/format-sql-queries.html">How to format SQL queries for readability</a></li><li><a href="guides/compare-text-files.html">How to compare two text files and find the differences</a></li><li><a href="guides/markdown-syntax-guide.html">Markdown syntax guide: the essentials with examples</a></li></ul>
+
+  <h2>More about this site</h2>
+  <nav class="sc-links" aria-label="More">
+    <a href="guides/">All guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a>
+  </nav>
+  </div>
+</details>
+
   <footer class="page-footer">
     <p class="copyright">&copy; <span id="copyrightYear"></span> DataEkam.com</p>
     <nav class="footer-links" aria-label="Site">
@@ -2464,49 +2498,6 @@ Alice,30</pre>
   </div>
 </div>
 
-<details id="siteContent">
-  <summary>
-    <span class="sc-sum-text"><span class="sc-sum-title">About Data Ekam</span><span class="sc-sum-hint">What it does, how to use it, FAQ and guides</span></span>
-    <span class="sc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
-  </summary>
-  <div class="sc-body">
-  <h2>Format, convert and compare data in one place</h2>
-  <p>Data Ekam is a free tool for cleaning up and moving structured text between formats. Paste your data or drop a file, pick what you want done, and copy or download the result. It handles <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL, GraphQL and plain text</strong>, and can also export to real <strong>Excel (.xlsx)</strong> and <strong>PDF</strong> files. There is nothing to install and no account to create.</p>
-  <p>Everything runs in your browser. The text you paste and the files you drop are processed on your own device and are never uploaded, which makes the tool safe to use with configuration files, customer exports and other data you cannot share.</p>
-
-  <h2>How to use it</h2>
-  <h3>Format</h3>
-  <p>On the Transform tab, paste your data, open <strong>Format</strong> and choose the format the input is in. Minified JSON is indented, XML is laid out by element, SQL is split into clauses, and CSV is tidied. If the input is not valid, the message tells you the line and position of the problem. Tick <strong>Clean</strong> to also remove stray blank lines and trailing spaces.</p>
-  <h3>Convert</h3>
-  <p>Open <strong>Convert</strong> and choose the target format. Any supported format can be converted to any other: CSV to JSON, JSON to YAML, XML to CSV, a table to Excel or PDF. Every conversion gives you a text preview to copy and a file to download.</p>
-  <h3>Compare</h3>
-  <p>On the Compare tab, put the original in <strong>Data A</strong> and the changed version in <strong>Data B</strong>, then press Compare. Differences are highlighted line by line, you can step through them one at a time, and a table lists every change. Options let you ignore spacing and empty lines.</p>
-
-  <h2>Frequently asked questions</h2>
-  <h3>Is my data uploaded anywhere?</h3>
-  <p>No. Formatting, conversion and comparison are done by your browser. Nothing you paste or drop is sent to a server. See the <a href="privacy.html">privacy policy</a> for details.</p>
-  <h3>Is Data Ekam free?</h3>
-  <p>Yes. There are no accounts, paid plans or usage limits.</p>
-  <h3>How much data can it handle?</h3>
-  <p>The input box accepts up to 1,000,000 characters. Larger files depend on the memory available to your browser.</p>
-  <h3>Why do I have to choose the format?</h3>
-  <p>Automatic detection fails on broken input, which is exactly what people bring to a formatter. Choosing the format lets the tool tell you precisely where your text stops being valid.</p>
-  <h3>Which files can I drop in?</h3>
-  <p>Text-based files such as .json, .yaml, .xml, .toml, .csv, .tsv, .md, .html, .sql, .graphql, .txt and .log, as well as Excel workbooks.</p>
-  <h3>What does "Ekam" mean?</h3>
-  <p>Ekam (एकम्) is Sanskrit for "one": one tool for many formats. It is pronounced DAY-tuh AY-kum. Read more <a href="about.html">about Data Ekam</a>.</p>
-
-  <h2>Guides</h2>
-  <p>Short, practical explanations of the formats this tool works with.</p>
-  <ul class="sc-guides"><li><a href="guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li><li><a href="guides/convert-csv-to-json.html">How to convert CSV to JSON</a></li><li><a href="guides/convert-json-to-csv.html">How to convert JSON to CSV</a></li><li><a href="guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="guides/yaml-indentation-errors.html">YAML indentation errors and other common mistakes</a></li><li><a href="guides/csv-vs-tsv.html">CSV vs TSV: what is the difference and which should you use?</a></li><li><a href="guides/xml-vs-json.html">XML vs JSON: key differences and how to convert between them</a></li><li><a href="guides/format-sql-queries.html">How to format SQL queries for readability</a></li><li><a href="guides/compare-text-files.html">How to compare two text files and find the differences</a></li><li><a href="guides/markdown-syntax-guide.html">Markdown syntax guide: the essentials with examples</a></li></ul>
-
-  <h2>More about this site</h2>
-  <nav class="sc-links" aria-label="More">
-    <a href="guides/">All guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a>
-  </nav>
-  </div>
-</details>
-
 <script>
 const MAX_CHARS = 1000000;
 const input = document.getElementById('input');
@@ -2598,7 +2589,8 @@ let footerIconBtns = [];
 // drops .wrap out of flex-fill mode so the page can grow to fit the panel
 // instead of squeezing the Transform/Compare section down to nothing.
 function updatePanelFillState(){
-  const anyOpen = [infoPanel, feedbackPanel, privacyPanel, otherSitesPanel].some(p => p.style.display !== 'none');
+  const anyOpen = [infoPanel, feedbackPanel, privacyPanel, otherSitesPanel].some(p => p.style.display !== 'none')
+    || document.getElementById('siteContent').open;
   document.body.classList.toggle('footer-panel-open', anyOpen);
 }
 
@@ -2941,18 +2933,20 @@ if (location.hash === '#feedback') {
   });
 }
 
-// ---------- Keep the tool in view after picking from a Format/Convert menu ----------
-// The page now continues below the tool, so if the visitor scrolled a little
-// to reach a low menu item, return to the top once they pick (previously the
-// page could not stay scrolled, because nothing existed below the tool).
-document.addEventListener('click', (e) => {
-  if (!e.target.closest || !e.target.closest('.convert-menu-item')) return;
-  if (window.innerWidth <= 480 || document.body.classList.contains('footer-panel-open')) return;
-  const wrapEl = document.querySelector('.wrap');
-  setTimeout(() => {
-    if (window.scrollY > 0 && window.scrollY < wrapEl.offsetHeight) window.scrollTo({ top: 0 });
-  }, 0);
-}, true);
+// ---------- "About Data Ekam" collapsible section ----------
+// Toggled explicitly (not left to the browser's built-in <details> handling)
+// so it behaves the same everywhere. Opening it releases the one-screen
+// desktop layout, exactly as the footer panels do, and brings the section
+// to the top of the screen so the expanded content is immediately visible.
+const siteContent = document.getElementById('siteContent');
+siteContent.querySelector('summary').addEventListener('click', (e) => {
+  e.preventDefault();
+  siteContent.open = !siteContent.open;
+  updatePanelFillState();
+  if (siteContent.open) {
+    requestAnimationFrame(() => siteContent.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+  }
+});
 
 // ---------- Copyright year ----------
 document.getElementById('copyrightYear').textContent = new Date().getFullYear();
