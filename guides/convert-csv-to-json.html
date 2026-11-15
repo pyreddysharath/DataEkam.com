@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Convert CSV to JSON (and What Can Go Wrong)</title>
+<meta name="description" content="How CSV rows map to JSON objects, why every value becomes a string, and how to handle headers, quotes, empty cells and delimiters.">
+<link rel="canonical" href="https://dataekam.com/guides/convert-csv-to-json.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Data Ekam">
+<meta property="og:title" content="How to Convert CSV to JSON (and What Can Go Wrong)">
+<meta property="og:description" content="How CSV rows map to JSON objects, why every value becomes a string, and how to handle headers, quotes, empty cells and delimiters.">
+<meta property="og:url" content="https://dataekam.com/guides/convert-csv-to-json.html">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+<header class="site-header"><div class="inner">
+  <a class="brand" href="/" aria-label="Data Ekam home"><svg viewBox="17 27 66 46" aria-hidden="true" fill="none" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"><path d="M50 50 C38 30 20 30 20 50 C20 70 38 70 50 50 Z" stroke="#4BB6E2"/><path d="M50 50 C62 30 80 30 80 50 C80 70 62 70 50 50 Z" stroke="#7FBBB6"/><path d="M53 50 L77 50" stroke="#7FBBB6"/></svg><span><span class="d">Data</span> <span class="e">Ekam</span></span></a>
+  <nav class="site-nav" aria-label="Main"><a href="/">Tool</a><a href="/guides/" aria-current="page">Guides</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+</div></header>
+<main>
+<p class="crumbs"><a href="/">Data Ekam</a> &rsaquo; <a href="/guides/">Guides</a></p>
+<h1>How to convert CSV to JSON</h1>
+<p class="lede">The conversion looks trivial until a comma appears inside a value. Here is how it works and what to check.</p>
+<h2>How rows become objects</h2>
+<p>A CSV file is a table: the first line usually names the columns, and each line after it is one record. The natural JSON equivalent is an array with one object per row, where the column names become keys.</p>
+<pre><code>name,age,city
+Alice,30,Pune
+Ravi,41,Chennai</code></pre>
+<pre><code>[
+  { "name": "Alice", "age": "30", "city": "Pune" },
+  { "name": "Ravi", "age": "41", "city": "Chennai" }
+]</code></pre>
+
+<h2>Doing it in Data Ekam</h2>
+<ol>
+  <li>Open the Transform tab and paste the CSV, or drop the <code>.csv</code> file onto the input box.</li>
+  <li>Open the <strong>Convert</strong> menu and choose <strong>JSON</strong>.</li>
+  <li>Review the preview, then use <strong>Copy</strong> for the text or <strong>Download</strong> for a <code>.json</code> file.</li>
+</ol>
+<p>The file is read by your browser and is not uploaded, so this is safe to do with data you cannot share.</p>
+
+<h2>Why every value is a string</h2>
+<p>In the example above, <code>"age": "30"</code> is a string, not the number 30. This is deliberate. CSV has no types; every cell is text. A converter that guesses will turn the postcode <code>02134</code> into <code>2134</code>, the product code <code>1E5</code> into <code>100000</code>, and a 16-digit account number into a rounded floating-point value. Keeping values as strings loses nothing. If your program needs numbers, convert the specific columns you know are numeric after loading the JSON.</p>
+
+<h2>Quotes, commas and line breaks inside values</h2>
+<p>The CSV rules that cause most broken conversions are about quoting:</p>
+<ul>
+  <li>A value containing a comma must be wrapped in double quotes: <code>"Sharma, Anita"</code>.</li>
+  <li>A double quote inside a quoted value is written twice: <code>"She said ""yes"""</code>.</li>
+  <li>A quoted value may contain a line break, so one record can span more than one line of the file.</li>
+</ul>
+<p>If your JSON has more keys than expected, or the columns shift part-way down, an unquoted comma or an unclosed quote is almost always the cause. Find the first row that looks wrong and check the row above it as well.</p>
+
+<h2>The header row</h2>
+<p>The first row supplies the keys, so it is worth cleaning before converting:</p>
+<ul>
+  <li><strong>Duplicate names.</strong> Two columns called <code>id</code> cannot both be keys in one object; one will overwrite the other. Rename them first.</li>
+  <li><strong>Blank names.</strong> A trailing comma in the header creates a column with no name.</li>
+  <li><strong>Spaces and capitals.</strong> <code>First Name</code> is a legal JSON key but an awkward one in code. Many people rename to <code>first_name</code> before converting.</li>
+  <li><strong>No header at all.</strong> If the file starts directly with data, add a header line, otherwise the first record will be used as the key names.</li>
+</ul>
+
+<h2>Empty cells</h2>
+<p>An empty cell becomes an empty string, <code>""</code>. That is different from JSON <code>null</code> and different from a key that is missing altogether. Systems that distinguish between "blank" and "not provided" will care, so decide which you need and adjust after conversion.</p>
+
+<h2>It is not always a comma</h2>
+<p>In many European locales, where the comma is the decimal separator, spreadsheet programs export "CSV" files that use semicolons between fields. Tab-separated files are also common and often carry a <code>.csv</code> or <code>.txt</code> extension. If the whole of each row lands in a single key, the delimiter is not what the converter expected. For tab-separated data, convert it as TSV; for semicolons, replace the delimiter first, taking care not to touch semicolons inside quoted values.</p>
+
+<h2>Flat in, flat out</h2>
+<p>CSV is flat, so the JSON you get is a flat list of flat objects. If the target needs nesting, for example an <code>address</code> object containing <code>city</code> and <code>pincode</code>, that reshaping is a separate step done in code after conversion. A column named <code>address.city</code> will simply become a key with a dot in its name.</p>
+
+<h2>A quick checklist</h2>
+<ul>
+  <li>Does the number of objects equal the number of data rows in the file?</li>
+  <li>Does every object have the same keys?</li>
+  <li>Did values with leading zeros keep them?</li>
+  <li>Do names with accents or non-Latin scripts display correctly? If not, the file was not saved as UTF-8.</li>
+</ul>
+<div class="cta"><h2>Try it in Data Ekam</h2><p>Format, convert and compare JSON, YAML, XML, CSV, SQL and more. Free, with no sign-up, and your data never leaves your browser.</p><a class="btn" href="/">Open the tool</a></div><div class="related"><h2>Related guides</h2><ul><li><a href="/guides/convert-json-to-csv.html">How to convert JSON to CSV</a></li><li><a href="/guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="/guides/yaml-indentation-errors.html">YAML indentation errors and other common mistakes</a></li></ul></div>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>&copy; 2026 DataEkam.com</span>
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></nav>
+</div></footer>
+</body>
+</html>

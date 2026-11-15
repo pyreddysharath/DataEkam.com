@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Format SQL Queries So They Are Easy to Read</title>
+<meta name="description" content="A practical SQL formatting style: one clause per line, aligned joins and conditions, sensible aliases and CTEs, with before and after examples.">
+<link rel="canonical" href="https://dataekam.com/guides/format-sql-queries.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Data Ekam">
+<meta property="og:title" content="How to Format SQL Queries So They Are Easy to Read">
+<meta property="og:description" content="A practical SQL formatting style: one clause per line, aligned joins and conditions, sensible aliases and CTEs, with before and after examples.">
+<meta property="og:url" content="https://dataekam.com/guides/format-sql-queries.html">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+<header class="site-header"><div class="inner">
+  <a class="brand" href="/" aria-label="Data Ekam home"><svg viewBox="17 27 66 46" aria-hidden="true" fill="none" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"><path d="M50 50 C38 30 20 30 20 50 C20 70 38 70 50 50 Z" stroke="#4BB6E2"/><path d="M50 50 C62 30 80 30 80 50 C80 70 62 70 50 50 Z" stroke="#7FBBB6"/><path d="M53 50 L77 50" stroke="#7FBBB6"/></svg><span><span class="d">Data</span> <span class="e">Ekam</span></span></a>
+  <nav class="site-nav" aria-label="Main"><a href="/">Tool</a><a href="/guides/" aria-current="page">Guides</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+</div></header>
+<main>
+<p class="crumbs"><a href="/">Data Ekam</a> &rsaquo; <a href="/guides/">Guides</a></p>
+<h1>How to format SQL queries for readability</h1>
+<p class="lede">The database does not care how a query is laid out. The next person to debug it at 2 a.m. cares a great deal.</p>
+<h2>Before and after</h2>
+<p>This query is valid and unreadable:</p>
+<pre><code>select c.name,count(o.id) as orders,sum(o.total) as revenue from customers c left join orders o on o.customer_id=c.id and o.status='paid' where c.country='IN' and c.created_at>='2026-01-01' group by c.name having count(o.id)>5 order by revenue desc limit 20;</code></pre>
+<p>This is the same query:</p>
+<pre><code>SELECT
+    c.name,
+    COUNT(o.id)  AS orders,
+    SUM(o.total) AS revenue
+FROM customers AS c
+LEFT JOIN orders AS o
+    ON  o.customer_id = c.id
+    AND o.status = 'paid'
+WHERE c.country = 'IN'
+  AND c.created_at >= '2026-01-01'
+GROUP BY c.name
+HAVING COUNT(o.id) > 5
+ORDER BY revenue DESC
+LIMIT 20;</code></pre>
+<p>Nothing about its behaviour has changed. What has changed is that you can now answer questions at a glance: which tables are involved, how they are joined, and what is filtered.</p>
+
+<h2>Why layout matters</h2>
+<p>SQL is read far more often than it is written. Queries are reviewed, pasted into tickets, tuned for performance and modified months later by someone else. A consistent layout also makes version-control diffs meaningful: when each column and condition is on its own line, a change shows up as one changed line instead of one enormous changed line.</p>
+
+<h2>The rules that do most of the work</h2>
+<h3>1. Start each clause on a new line</h3>
+<p><code>SELECT</code>, <code>FROM</code>, each <code>JOIN</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code> and <code>LIMIT</code> begin their own line at the left margin. The clause keywords then form a column you can scan down.</p>
+<h3>2. One selected column per line</h3>
+<p>Listing columns vertically makes it obvious what the query returns and easy to add, remove or comment out a column. Whether the comma goes at the end of the line or the start of the next is a matter of team preference; choose one.</p>
+<h3>3. Upper-case keywords, lower-case names</h3>
+<p>SQL keywords are not case-sensitive, so this is purely visual, but separating the language (<code>SELECT</code>, <code>JOIN</code>) from your own identifiers (<code>customers</code>, <code>created_at</code>) helps the eye, especially where there is no syntax colouring, such as in logs and emails.</p>
+<h3>4. Put every join condition under its join</h3>
+<p>Indent <code>ON</code> beneath the <code>JOIN</code> it belongs to, with additional conditions on their own lines beginning with <code>AND</code>. Always write the join type explicitly: <code>INNER JOIN</code> or <code>LEFT JOIN</code>, never a list of tables separated by commas with the join conditions hidden in <code>WHERE</code>.</p>
+<h3>5. One condition per line in WHERE</h3>
+<p>Begin each line with <code>AND</code> or <code>OR</code>. When the two are mixed, add parentheses and indentation, because <code>AND</code> is evaluated before <code>OR</code> and a missing bracket changes the result without causing an error:</p>
+<pre><code>WHERE o.status = 'paid'
+  AND (
+        o.channel = 'web'
+     OR o.channel = 'app'
+  )</code></pre>
+
+<h2>Aliases</h2>
+<p>Give tables short aliases that hint at the table name, <code>c</code> for <code>customers</code> and <code>o</code> for <code>orders</code>, and avoid <code>t1</code> and <code>t2</code>, which mean nothing. Once a query has more than one table, prefix every column with its alias so a reader never has to guess where a column comes from. Writing <code>AS</code> for both column and table aliases makes them easier to spot.</p>
+
+<h2>Subqueries and CTEs</h2>
+<p>A subquery nested three levels deep has to be read from the inside out. A common table expression lets you name each step and read from top to bottom:</p>
+<pre><code>WITH paid_orders AS (
+    SELECT customer_id, total
+    FROM orders
+    WHERE status = 'paid'
+)
+SELECT
+    c.name,
+    SUM(p.total) AS revenue
+FROM customers AS c
+INNER JOIN paid_orders AS p
+    ON p.customer_id = c.id
+GROUP BY c.name;</code></pre>
+<p>Indent the body of each CTE and of any remaining subquery by one level, and close the bracket on its own line.</p>
+
+<h2>Smaller habits worth having</h2>
+<ul>
+  <li><strong>Avoid <code>SELECT *</code></strong> in saved queries. Naming the columns documents what the query needs and protects it from changes to the table.</li>
+  <li><strong>Lay out <code>CASE</code> vertically</strong>, with each <code>WHEN</code> on its own line and <code>END</code> aligned with <code>CASE</code>.</li>
+  <li><strong>Break long <code>IN</code> lists</strong> across lines once they pass five or six values.</li>
+  <li><strong>Comment the why.</strong> A line such as <code>-- excludes test accounts created by QA</code> is worth more than any amount of alignment.</li>
+  <li><strong>End statements with a semicolon</strong>, so that scripts containing several statements are unambiguous.</li>
+</ul>
+
+<h2>Consistency beats any particular style</h2>
+<p>Teams argue about leading commas, indent width and whether keywords should be right-aligned. None of it matters as much as everyone doing the same thing. Pick a style, write it down in a few lines, and let a formatter apply it so nobody has to do it by hand.</p>
+
+<h2>Formatting SQL in Data Ekam</h2>
+<p>Paste the query on the Transform tab, open <strong>Format</strong> and choose <strong>SQL</strong>. The query is laid out again with each clause keyword on its own line and its contents indented beneath it, and keywords such as <code>select</code> and <code>as</code> are converted to upper case. You can copy the result or download it as a file. Only layout and keyword case change, so the query's meaning stays the same. It is a text formatter, not a database: it does not know your tables, so it cannot tell you whether a column exists or a query is efficient. Conversions between SQL and tabular formats are best-effort, because a query is not a table.</p>
+<div class="cta"><h2>Try it in Data Ekam</h2><p>Format, convert and compare JSON, YAML, XML, CSV, SQL and more. Free, with no sign-up, and your data never leaves your browser.</p><a class="btn" href="/">Open the tool</a></div><div class="related"><h2>Related guides</h2><ul><li><a href="/guides/compare-text-files.html">How to compare two text files and find the differences</a></li><li><a href="/guides/markdown-syntax-guide.html">Markdown syntax guide: the essentials with examples</a></li><li><a href="/guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li></ul></div>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>&copy; 2026 DataEkam.com</span>
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></nav>
+</div></footer>
+</body>
+</html>

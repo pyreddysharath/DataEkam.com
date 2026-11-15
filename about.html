@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Data Ekam</title>
+<meta name="description" content="What Data Ekam is, how it works entirely in your browser, what the name means and how the site is funded.">
+<link rel="canonical" href="https://dataekam.com/about.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Data Ekam">
+<meta property="og:title" content="About Data Ekam">
+<meta property="og:description" content="What Data Ekam is, how it works entirely in your browser, what the name means and how the site is funded.">
+<meta property="og:url" content="https://dataekam.com/about.html">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+<header class="site-header"><div class="inner">
+  <a class="brand" href="/" aria-label="Data Ekam home"><svg viewBox="17 27 66 46" aria-hidden="true" fill="none" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"><path d="M50 50 C38 30 20 30 20 50 C20 70 38 70 50 50 Z" stroke="#4BB6E2"/><path d="M50 50 C62 30 80 30 80 50 C80 70 62 70 50 50 Z" stroke="#7FBBB6"/><path d="M53 50 L77 50" stroke="#7FBBB6"/></svg><span><span class="d">Data</span> <span class="e">Ekam</span></span></a>
+  <nav class="site-nav" aria-label="Main"><a href="/">Tool</a><a href="/guides/">Guides</a><a href="/about.html" aria-current="page">About</a><a href="/contact.html">Contact</a></nav>
+</div></header>
+<main>
+<h1>About Data Ekam</h1>
+<p class="lede">One place to format, convert and compare everyday data, without sending that data anywhere.</p>
+<h2>What Data Ekam is</h2>
+<p>Data Ekam is a free web tool for people who handle structured text: developers, analysts, testers, students and anyone who has ever been handed a file in the wrong format. It does three jobs. It <strong>formats</strong> messy JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL, GraphQL and plain text so it is readable. It <strong>converts</strong> between those formats and can also produce real Excel workbooks and PDF files. And it <strong>compares</strong> two pieces of text line by line so you can see exactly what changed.</p>
+<p>Most sites that do these things do one of them per page, so a simple task turns into three tabs and three uploads. Data Ekam keeps all of it on one screen with one input box.</p>
+
+<h2>What the name means</h2>
+<p>"Ekam" (एकम्) is the Sanskrit word for "one". The name is pronounced <strong>DAY-tuh AY-kum</strong>. It describes the idea behind the site: one tool, one page and one input for the many formats that data moves through. The logo is two loops meeting at a single point, which can be read as a D and an E.</p>
+
+<h2>How it works</h2>
+<p>Everything runs in your browser. When you paste text or drop a file into Data Ekam, the parsing, formatting, conversion and comparison are done by JavaScript on your own device. Your content is not uploaded to a server, because there is no server-side processing to upload it to. That matters when the data is a customer export, a configuration file with internal hostnames, or anything else you would rather not hand to a third party.</p>
+<p>Working this way has a practical limit, which we would rather state than hide: the input box accepts up to 1,000,000 characters, and very large files depend on how much memory your browser has available.</p>
+<p>The tool relies on three well-known open-source libraries, loaded from a public CDN: <strong>SheetJS</strong> for reading and writing Excel workbooks, <strong>js-yaml</strong> for YAML, and <strong>jsPDF</strong> for building PDF files. The remaining parsers and formatters, and the comparison view, are written for this site.</p>
+
+<h2>What we try to get right</h2>
+<ul>
+  <li><strong>You choose the format.</strong> Data Ekam does not guess what your input is. Guessing fails on exactly the inputs that are broken, which are the ones people bring to a formatter. You pick the format and the tool tells you where the text stops being valid.</li>
+  <li><strong>Errors say where.</strong> When input cannot be parsed, the message includes the line and position, and the line is highlighted in the input box.</li>
+  <li><strong>Conversions do not silently lose data.</strong> JSON, YAML and XML are converted structure to structure, so nesting survives. Where a conversion can only be approximate, as with SQL and GraphQL, the tool says so.</li>
+  <li><strong>Output you can use.</strong> Every result can be copied as text or downloaded as a file. Excel and PDF downloads are real <code>.xlsx</code> and <code>.pdf</code> files.</li>
+</ul>
+
+<h2>How the site is funded</h2>
+<p>Data Ekam is free to use and has no accounts, paid tiers or usage limits. It is intended to be supported by advertising through Google. Advertising cookies are only set if you accept them in the cookie banner; if you decline, the tool works in exactly the same way. The details are in the <a href="/privacy.html">privacy policy</a>.</p>
+
+<h2>Who runs it</h2>
+<p>Data Ekam is an independent project. The same people also build and maintain a small family of free sites: <a href="https://ayubase6.com" rel="noopener">AyuBase6.com</a>, a personal health companion; <a href="https://bharatgaruda.com" rel="noopener">BharatGaruda.com</a>, a directory of Indian government links organised by state; <a href="https://intiguttu.com" rel="noopener">IntiGuttu.com</a>, a searchable home reference for kitchen tips, remedies and recipes; and <a href="https://rummytally.com" rel="noopener">RummyTally.com</a>, a rummy scoreboard.</p>
+<p>If something is broken, confusing or missing, we would like to hear about it. The <a href="/contact.html">contact page</a> explains how to reach us.</p>
+
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>&copy; 2026 DataEkam.com</span>
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></nav>
+</div></footer>
+</body>
+</html>
