@@ -1906,18 +1906,39 @@
   .footer-links{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:12px; }
   .footer-links a{ color:#8890a3; text-decoration:none; padding:4px 0; }
   .footer-links a:hover{ color:var(--footer-active); text-decoration:underline; }
-  #siteContent{ max-width:860px; width:100%; margin:48px auto 0; padding:32px 0 40px; border-top:1px solid var(--border); font-size:15px; line-height:1.7; color:var(--text); }
-  #siteContent h2{ font-size:22px; line-height:1.3; margin:0 0 12px; font-weight:700; color:var(--text); }
-  #siteContent h2:not(:first-child){ margin-top:38px; }
-  #siteContent h3{ font-size:16px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
+  /* One collapsible block (closed by default) holding all the site content,
+     marked by a vertical accent bar on its left edge. */
+  #siteContent{ max-width:860px; width:100%; margin:40px auto 32px; padding:2px 0 2px 18px; border-left:3px solid var(--footer-active); font-size:15px; line-height:1.7; color:var(--text); }
+  #siteContent > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:14px; padding:8px 0; user-select:none; }
+  #siteContent > summary::-webkit-details-marker{ display:none; }
+  #siteContent .sc-sum-text{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  #siteContent .sc-sum-title{ font-size:18px; font-weight:700; line-height:1.3; }
+  #siteContent .sc-sum-hint{ font-size:13px; color:#8890a3; }
+  #siteContent .sc-chevron{ flex:none; width:34px; height:34px; border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--footer-active); transition:transform 0.2s ease, border-color 0.2s ease; }
+  #siteContent .sc-chevron svg{ width:16px; height:16px; }
+  #siteContent[open] .sc-chevron{ transform:rotate(180deg); }
+  #siteContent > summary:hover .sc-chevron{ border-color:var(--footer-active); }
+  #siteContent > summary:focus-visible{ outline:2px solid var(--footer-active); outline-offset:4px; border-radius:6px; }
+  #siteContent .sc-body{ padding:18px 0 10px; }
+  #siteContent h2{ font-size:20px; line-height:1.3; margin:0 0 12px; font-weight:700; color:var(--text); }
+  #siteContent h2:not(:first-child){ margin-top:36px; }
+  #siteContent h3{ font-size:15px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
   #siteContent p{ margin:0 0 14px; }
-  #siteContent ul, #siteContent ol{ margin:0 0 14px; padding-left:22px; }
-  #siteContent li{ margin-bottom:8px; }
   #siteContent strong{ font-weight:600; }
-  #siteContent a{ color:var(--footer-active); }
-  #siteContent .sc-guides{ list-style:none; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:4px 28px; }
-  #siteContent .sc-guides li{ margin:0; padding:7px 0; border-bottom:1px solid var(--border); }
-  #siteContent .sc-links{ margin:34px 0 0; font-size:13px; display:flex; flex-wrap:wrap; gap:6px 18px; }
+  /* Inline links: accent colour with a fine, offset underline. */
+  #siteContent p a{ color:var(--footer-active); font-weight:600; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+  #siteContent p a:hover{ text-decoration-thickness:2px; }
+  /* Guide links: cards with an arrow. */
+  #siteContent .sc-guides{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
+  #siteContent .sc-guides li{ margin:0; display:flex; }
+  #siteContent .sc-guides a{ flex:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; background:var(--panel); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:14px; font-weight:600; line-height:1.4; text-decoration:none; transition:border-color 0.15s ease, transform 0.15s ease; }
+  #siteContent .sc-guides a::after{ content:"→"; color:var(--footer-active); flex:none; transition:transform 0.15s ease; }
+  #siteContent .sc-guides a:hover{ border-color:var(--footer-active); }
+  #siteContent .sc-guides a:hover::after{ transform:translateX(3px); }
+  /* Page links: pills. */
+  #siteContent .sc-links{ margin:14px 0 0; display:flex; flex-wrap:wrap; gap:8px; }
+  #siteContent .sc-links a{ padding:6px 14px; border:1px solid var(--border); border-radius:999px; color:var(--text); font-size:13px; font-weight:600; text-decoration:none; transition:border-color 0.15s ease, color 0.15s ease; }
+  #siteContent .sc-links a:hover{ border-color:var(--footer-active); color:var(--footer-active); }
   @media (min-width: 481px){
     /* The tool keeps exactly one viewport of height (as before, when .wrap
        was the only child of a 100%-tall body); the site content below it is
@@ -2443,7 +2464,12 @@ Alice,30</pre>
   </div>
 </div>
 
-<section id="siteContent" aria-label="About Data Ekam">
+<details id="siteContent">
+  <summary>
+    <span class="sc-sum-text"><span class="sc-sum-title">About Data Ekam</span><span class="sc-sum-hint">What it does, how to use it, FAQ and guides</span></span>
+    <span class="sc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+  </summary>
+  <div class="sc-body">
   <h2>Format, convert and compare data in one place</h2>
   <p>Data Ekam is a free tool for cleaning up and moving structured text between formats. Paste your data or drop a file, pick what you want done, and copy or download the result. It handles <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL, GraphQL and plain text</strong>, and can also export to real <strong>Excel (.xlsx)</strong> and <strong>PDF</strong> files. There is nothing to install and no account to create.</p>
   <p>Everything runs in your browser. The text you paste and the files you drop are processed on your own device and are never uploaded, which makes the tool safe to use with configuration files, customer exports and other data you cannot share.</p>
@@ -2474,10 +2500,12 @@ Alice,30</pre>
   <p>Short, practical explanations of the formats this tool works with.</p>
   <ul class="sc-guides"><li><a href="guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li><li><a href="guides/convert-csv-to-json.html">How to convert CSV to JSON</a></li><li><a href="guides/convert-json-to-csv.html">How to convert JSON to CSV</a></li><li><a href="guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="guides/yaml-indentation-errors.html">YAML indentation errors and other common mistakes</a></li><li><a href="guides/csv-vs-tsv.html">CSV vs TSV: what is the difference and which should you use?</a></li><li><a href="guides/xml-vs-json.html">XML vs JSON: key differences and how to convert between them</a></li><li><a href="guides/format-sql-queries.html">How to format SQL queries for readability</a></li><li><a href="guides/compare-text-files.html">How to compare two text files and find the differences</a></li><li><a href="guides/markdown-syntax-guide.html">Markdown syntax guide: the essentials with examples</a></li></ul>
 
+  <h2>More about this site</h2>
   <nav class="sc-links" aria-label="More">
     <a href="guides/">All guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a>
   </nav>
-</section>
+  </div>
+</details>
 
 <script>
 const MAX_CHARS = 1000000;
