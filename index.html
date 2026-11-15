@@ -1921,8 +1921,8 @@
   #siteContent > summary:hover .sc-chevron{ border-color:var(--footer-active); }
   #siteContent > summary:focus-visible{ outline:2px solid var(--footer-active); outline-offset:4px; border-radius:6px; }
   #siteContent .sc-body{ max-width:860px; padding:18px 0 10px; }
-  #siteContent h2{ font-family:var(--sans); font-size:18px; line-height:1.3; margin:0 0 12px; font-weight:700; color:var(--text); }
-  #siteContent h2:not(:first-child){ margin-top:36px; }
+  #siteContent h2{ font-family:var(--sans); font-size:15px; line-height:1.3; margin:0 0 8px; font-weight:700; color:var(--text); }
+  #siteContent h2:not(:first-child){ margin-top:24px; }
   #siteContent h3{ font-family:var(--sans); font-size:14px; margin:20px 0 4px; font-weight:700; color:var(--ekam); }
   #siteContent p{ margin:0 0 14px; }
   #siteContent strong{ font-weight:600; }
@@ -1937,7 +1937,10 @@
   #siteContent .sc-guides a:hover{ border-color:var(--footer-active); }
   #siteContent .sc-guides a:hover::after{ transform:translateX(3px); }
   /* Page links: pills. */
-  #siteContent .sc-links{ margin:14px 0 0; display:flex; flex-wrap:wrap; gap:8px; }
+  #siteContent .sc-steps{ list-style:none; margin:0 0 6px; padding:0; }
+  #siteContent .sc-steps li{ margin:0; padding:7px 0; border-bottom:1px solid var(--border); }
+  #siteContent .sc-steps li:last-child{ border-bottom:0; }
+  #siteContent .sc-links{ margin:16px 0 0; display:flex; flex-wrap:wrap; gap:8px; }
   #siteContent .sc-links a{ padding:6px 14px; border:1px solid var(--border); border-radius:999px; color:var(--text); font-size:13px; font-weight:600; text-decoration:none; transition:border-color 0.15s ease, color 0.15s ease; }
   #siteContent .sc-links a:hover{ border-color:var(--footer-active); color:var(--footer-active); }
 </style>
@@ -2205,37 +2208,25 @@
     <span class="sc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
   </summary>
   <div class="sc-body">
-  <h2>Format, convert and compare data in one place</h2>
-  <p>Data Ekam is a free tool for cleaning up and moving structured text between formats. Paste your data or drop a file, pick what you want done, and copy or download the result. It handles <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL, GraphQL and plain text</strong>, and can also export to real <strong>Excel (.xlsx)</strong> and <strong>PDF</strong> files. There is nothing to install and no account to create.</p>
-  <p>Everything runs in your browser. The text you paste and the files you drop are processed on your own device and are never uploaded, which makes the tool safe to use with configuration files, customer exports and other data you cannot share.</p>
+  <p>Data Ekam is a free tool that formats, converts and compares <strong>JSON, YAML, XML, TOML, CSV, TSV, Markdown, HTML, SQL and GraphQL</strong>, with export to Excel and PDF. Everything runs in your browser, so your data is never uploaded.</p>
 
   <h2>How to use it</h2>
-  <h3>Format</h3>
-  <p>On the Transform tab, paste your data, open <strong>Format</strong> and choose the format the input is in. Minified JSON is indented, XML is laid out by element, SQL is split into clauses, and CSV is tidied. If the input is not valid, the message tells you the line and position of the problem. Tick <strong>Clean</strong> to also remove stray blank lines and trailing spaces.</p>
-  <h3>Convert</h3>
-  <p>Open <strong>Convert</strong> and choose the target format. Any supported format can be converted to any other: CSV to JSON, JSON to YAML, XML to CSV, a table to Excel or PDF. Every conversion gives you a text preview to copy and a file to download.</p>
-  <h3>Compare</h3>
-  <p>On the Compare tab, put the original in <strong>Data A</strong> and the changed version in <strong>Data B</strong>, then press Compare. Differences are highlighted line by line, you can step through them one at a time, and a table lists every change. Options let you ignore spacing and empty lines.</p>
+  <ul class="sc-steps">
+    <li><strong>Format:</strong> paste your data, open Format and pick its format. Errors show the line and position.</li>
+    <li><strong>Convert:</strong> open Convert and pick the target format, then copy or download the result.</li>
+    <li><strong>Compare:</strong> put two versions in Data A and Data B to see every difference, line by line.</li>
+  </ul>
 
-  <h2>Frequently asked questions</h2>
-  <h3>Is my data uploaded anywhere?</h3>
-  <p>No. Formatting, conversion and comparison are done by your browser. Nothing you paste or drop is sent to a server. See the <a href="privacy.html">privacy policy</a> for details.</p>
-  <h3>Is Data Ekam free?</h3>
-  <p>Yes. There are no accounts, paid plans or usage limits.</p>
-  <h3>How much data can it handle?</h3>
-  <p>The input box accepts up to 1,000,000 characters. Larger files depend on the memory available to your browser.</p>
-  <h3>Why do I have to choose the format?</h3>
-  <p>Automatic detection fails on broken input, which is exactly what people bring to a formatter. Choosing the format lets the tool tell you precisely where your text stops being valid.</p>
-  <h3>Which files can I drop in?</h3>
-  <p>Text-based files such as .json, .yaml, .xml, .toml, .csv, .tsv, .md, .html, .sql, .graphql, .txt and .log, as well as Excel workbooks.</p>
-  <h3>What does "Ekam" mean?</h3>
-  <p>Ekam (एकम्) is Sanskrit for "one": one tool for many formats. It is pronounced DAY-tuh AY-kum. Read more <a href="about.html">about Data Ekam</a>.</p>
+  <h2>Questions</h2>
+  <ul class="sc-steps">
+    <li><strong>Is it free?</strong> Yes, with no account and no limits.</li>
+    <li><strong>How much data?</strong> Up to 1,000,000 characters.</li>
+    <li><strong>What does "Ekam" mean?</strong> Sanskrit for "one": one tool for many formats.</li>
+  </ul>
 
   <h2>Guides</h2>
-  <p>Short, practical explanations of the formats this tool works with.</p>
-  <ul class="sc-guides"><li><a href="guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li><li><a href="guides/convert-csv-to-json.html">How to convert CSV to JSON</a></li><li><a href="guides/convert-json-to-csv.html">How to convert JSON to CSV</a></li><li><a href="guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="guides/yaml-indentation-errors.html">YAML indentation errors and other common mistakes</a></li><li><a href="guides/csv-vs-tsv.html">CSV vs TSV: what is the difference and which should you use?</a></li><li><a href="guides/xml-vs-json.html">XML vs JSON: key differences and how to convert between them</a></li><li><a href="guides/format-sql-queries.html">How to format SQL queries for readability</a></li><li><a href="guides/compare-text-files.html">How to compare two text files and find the differences</a></li><li><a href="guides/markdown-syntax-guide.html">Markdown syntax guide: the essentials with examples</a></li></ul>
+  <ul class="sc-guides"><li><a href="guides/fix-common-json-errors.html">Common JSON errors and how to fix them</a></li><li><a href="guides/convert-csv-to-json.html">How to convert CSV to JSON</a></li><li><a href="guides/json-vs-yaml-vs-toml.html">JSON vs YAML vs TOML: which one should you use?</a></li><li><a href="guides/compare-text-files.html">How to compare two text files and find the differences</a></li></ul>
 
-  <h2>More about this site</h2>
   <nav class="sc-links" aria-label="More">
     <a href="guides/">All guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a>
   </nav>
